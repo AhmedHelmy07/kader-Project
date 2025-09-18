@@ -1,0 +1,5 @@
+{
+  "name": "Kader Project: Smart Wheelchair Dashboard",
+  "description": "A web dashboard for the Kader Project smart autonomous wheelchair, featuring a simulation of wheelchair movement in a hospital with control options.",
+  "requestFramePermissions": []
+}
