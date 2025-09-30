@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { KaderLogo } from './icons/KaderLogo';
 import { useAuth } from '../auth/AuthContext';
 import { auth } from '../firebase';
 
@@ -33,7 +34,9 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
                             <a href="#/" onClick={(e) => { e.preventDefault(); navigate('#/');}} className="flex-shrink-0 flex items-center gap-2 text-white">
-                                <img src="/images/logo.png" alt="Kader Logo" className="h-8 w-8 object-contain" />
+                                <span className="bg-gray-900 rounded-full p-1 flex items-center justify-center">
+                                    <KaderLogo className="h-8 w-8" />
+                                </span>
                                 <span className="font-bold text-xl">Kader Project</span>
                             </a>
                     </div>

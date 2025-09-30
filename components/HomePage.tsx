@@ -27,8 +27,10 @@ const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                     <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
                     <div className="relative z-10 flex flex-col items-center">
                         <div className="mb-6">
-                            {/* Logo icon */}
-                            <img src={logo} alt="Kader Logo" className="w-32 h-32 mx-auto drop-shadow-lg rounded-full border-4 border-blue-600 bg-white" />
+                            {/* Logo icon with dark circle */}
+                            <span className="bg-gray-900 rounded-full p-4 flex items-center justify-center border-4 border-blue-600 drop-shadow-lg">
+                                <img src={logo} alt="Kader Logo" className="w-24 h-24" />
+                            </span>
                         </div>
                         <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold mb-4 leading-tight tracking-tight text-white">
                             Revolutionizing Patient Mobility

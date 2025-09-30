@@ -51,7 +51,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
         </div>
       </div>
       <div className="w-full max-w-md bg-gray-800/90 rounded-2xl shadow-2xl p-8 border border-blue-900">
-        <form onSubmit={handleLogin}>
+  <form onSubmit={handleLogin}>
           {error && <p className="bg-red-500/20 text-red-400 p-3 rounded-md mb-4 text-sm">{error}</p>}
           <div className="mb-4">
             <label className="block text-blue-300 text-sm font-bold mb-2" htmlFor="email">
@@ -75,6 +75,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
           </div>
           <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg" type="submit">
             Sign In
+          </button>
+          <button type="button" onClick={() => navigate('#/')} className="w-full mt-2 bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg">
+            Cancel
           </button>
         </form>
         <div className="relative my-6">

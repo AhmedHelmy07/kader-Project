@@ -81,6 +81,9 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
           <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg" type="submit">
             Register
           </button>
+          <button type="button" onClick={() => navigate('#/')} className="w-full mt-2 bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg">
+            Cancel
+          </button>
         </form>
          <p className="text-center text-blue-300 text-sm mt-6">
           Already have an account?{' '}
