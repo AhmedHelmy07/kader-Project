@@ -1,4 +1,5 @@
 import React from 'react';
+import logo from '../images/logo.png';
 import { Footer } from './Footer';
 import { Navbar } from './Navbar';
 
@@ -27,7 +28,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                     <div className="relative z-10 flex flex-col items-center">
                         <div className="mb-6">
                             {/* Logo icon */}
-                            <img src={require('../images/logo.png')} alt="Kader Logo" className="w-32 h-32 mx-auto drop-shadow-lg rounded-full border-4 border-blue-600 bg-white" />
+                            <img src={logo} alt="Kader Logo" className="w-32 h-32 mx-auto drop-shadow-lg rounded-full border-4 border-blue-600 bg-white" />
                         </div>
                         <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold mb-4 leading-tight tracking-tight text-white">
                             Revolutionizing Patient Mobility
