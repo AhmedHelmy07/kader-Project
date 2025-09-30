@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from '../images/logo.png';
+import hospitalFloor from '../images/hospital_floor.jpg';
 import { Footer } from './Footer';
 import { Navbar } from './Navbar';
 
@@ -82,7 +83,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                          <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-center">Simple, Safe, and Efficient</h2>
                          <div className="flex flex-col md:flex-row items-center gap-12">
                             <div className="md:w-1/2">
-                                <img src="https://images.unsplash.com/photo-1512431184984-2571e7f3c1a3?q=80&w=1964&auto=format&fit=crop" alt="Hospital hallway" className="rounded-lg shadow-2xl"/>
+                                <img src={hospitalFloor} alt="Hospital hallway" className="rounded-lg shadow-2xl"/>
                             </div>
                             <div className="md:w-1/2 space-y-6 text-gray-300 text-lg">
                                 <p><strong className="text-white">1. Book a Ride:</strong> A patient or staff member requests a wheelchair via the mobile app.</p>
