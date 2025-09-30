@@ -1,6 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import logo from '../images/logo.png';
 import hospitalFloor from '../images/hospital_floor.jpg';
+import img1 from '../images/1.jpg';
+import img2 from '../images/2.jpg';
+import img3 from '../images/3.jpg';
+import img4 from '../images/4.jpg';
+import img5 from '../images/5.jpg';
+import img7 from '../images/7.jpg';
+import img8 from '../images/8.jpg';
 import { Footer } from './Footer';
 import { Navbar } from './Navbar';
 
@@ -18,6 +25,12 @@ const FeatureCard: React.FC<{ icon: string; title: string; children: React.React
 
 
 const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
+    const images = [img1, img2, img3, img4, img5, img7, img8];
+    const [idx, setIdx] = useState(0);
+    useEffect(() => {
+        const t = setInterval(() => setIdx(i => (i + 1) % images.length), 3000);
+        return () => clearInterval(t);
+    }, []);
     return (
         <div className="bg-black text-white min-h-screen font-sans">
             <Navbar navigate={navigate} />
@@ -53,6 +66,16 @@ const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                         <button onClick={() => navigate('#/register')} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105">
                             Get Started
                         </button>
+                    </div>
+                </section>
+
+                {/* Image slider before Why Kader */}
+                <section className="py-12 px-4 flex justify-center">
+                    <div className="w-4/5 max-w-4xl">
+                        <div className="relative rounded-xl overflow-hidden shadow-2xl">
+                            <img src={images[idx]} alt={`slide-${idx}`} className="w-full h-64 object-cover rounded-xl transition-all duration-700" />
+                            <div className="absolute left-4 bottom-4 bg-black/40 text-white px-3 py-1 rounded">Photo {idx+1} of {images.length}</div>
+                        </div>
                     </div>
                 </section>
 

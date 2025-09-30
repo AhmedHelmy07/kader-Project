@@ -21,18 +21,18 @@ const CommunityPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-3xl mx-auto bg-gradient-to-br from-black/40 to-black/20 rounded p-6">
+    <div className="min-h-screen p-6 flex justify-center">
+      <div className="w-4/5 max-w-3xl mx-auto bg-gradient-to-br from-black/40 to-black/20 rounded p-6">
         <div className="flex items-center gap-4 mb-4">
           <KaderLogo className="w-12 h-12" />
           <div>
             <h2 className="text-2xl font-bold">Community</h2>
-            <div className="text-sm text-gray-400">Share updates and chat with other users.</div>
+            <div className="text-sm text-gray-300">Share updates and chat with other users.</div>
           </div>
         </div>
 
         <div className="mb-4">
-          <textarea value={text} onChange={(e) => setText(e.target.value)} className="w-full p-3 bg-transparent border rounded" rows={3} placeholder="Write something..." />
+          <textarea value={text} onChange={(e) => setText(e.target.value)} className="w-full p-3 bg-transparent border rounded text-gray-200" rows={3} placeholder="Write something..." />
           <div className="flex justify-end mt-2">
             <button onClick={send} className="bg-blue-600 px-4 py-2 rounded text-white">Post</button>
           </div>
@@ -45,7 +45,7 @@ const CommunityPage: React.FC = () => {
                 <div>{m.userEmail}</div>
                 <div>{m.createdAt?.toDate?.()?.toLocaleString?.() || ''}</div>
               </div>
-              <div className="mt-1">{m.text}</div>
+              <div className="mt-1 text-gray-200">{m.text}</div>
             </div>
           ))}
         </div>

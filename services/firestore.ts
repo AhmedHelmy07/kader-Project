@@ -8,6 +8,7 @@ const messagesCol = firestore.collection('messages');
 const contactCol = firestore.collection('contact_messages');
 const ordersCol = firestore.collection('orders');
 const usersCol = firestore.collection('users');
+const cartsCol = firestore.collection('carts');
 
 export type Product = {
   id?: string;
@@ -169,6 +170,23 @@ export const getUserDoc = async (uid: string) => {
 
 export const setUserAdmin = async (uid: string, isAdmin: boolean) => {
   await usersCol.doc(uid).set({ admin: isAdmin }, { merge: true });
+};
+
+// Cart helpers: store per-user cart in `carts/{uid}` document for persistence
+export const setCartForUser = async (uid: string, cart: any[]) => {
+  await cartsCol.doc(uid).set({ items: cart, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+};
+
+export const getCartForUser = async (uid: string) => {
+  const doc = await cartsCol.doc(uid).get();
+  return doc.exists ? (doc.data() as any).items || [] : [];
+};
+
+export const onCartChanged = (uid: string, cb: (items: any[]) => void) => {
+  return cartsCol.doc(uid).onSnapshot(snap => {
+    const data = snap.exists ? (snap.data() as any).items || [] : [];
+    cb(data);
+  });
 };
 
 export default {

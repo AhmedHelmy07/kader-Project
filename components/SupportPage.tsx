@@ -23,19 +23,19 @@ const SupportPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-3xl mx-auto bg-gradient-to-br from-black/40 to-black/20 rounded p-6">
+    <div className="min-h-screen p-6 flex justify-center">
+      <div className="w-4/5 max-w-3xl mx-auto bg-gradient-to-br from-black/40 to-black/20 rounded p-6">
         <div className="flex items-center gap-4 mb-4">
           <KaderLogo className="w-12 h-12" />
           <div>
             <h2 className="text-2xl font-bold">Support</h2>
-            <div className="text-sm text-gray-400">Create tickets and track their status.</div>
+            <div className="text-sm text-gray-300">Create tickets and track their status.</div>
           </div>
         </div>
 
         <div className="mb-6 bg-black/20 p-4 rounded">
-          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" className="w-full p-3 mb-3 bg-transparent border rounded" />
-          <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Describe the issue" className="w-full p-3 bg-transparent rounded" rows={4} />
+          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" className="w-full p-3 mb-3 bg-transparent border rounded text-gray-200" />
+          <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Describe the issue" className="w-full p-3 bg-transparent rounded text-gray-200" rows={4} />
           <div className="flex justify-end mt-3">
             <button onClick={submit} className="bg-blue-600 px-4 py-2 rounded text-white">Create Ticket</button>
           </div>

@@ -25,10 +25,19 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
     }
     try {
       await auth.createUserWithEmailAndPassword(email, password);
-      navigate('#/'); // Go to home after registration
+      showWelcome();
     } catch (err: any) {
       setError(err.message);
     }
+  };
+
+  const [welcome, setWelcome] = useState(false);
+  const showWelcome = () => {
+    setWelcome(true);
+    setTimeout(() => {
+      setWelcome(false);
+      navigate('#/');
+    }, 1400);
   };
 
   return (
@@ -104,6 +113,16 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
           </a>
         </p>
       </div>
+      {welcome && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-black/60 absolute inset-0" />
+          <div className="relative bg-gradient-to-br from-gray-900 to-black p-6 rounded-xl flex flex-col items-center text-center border border-blue-700">
+            <KaderLogo className="w-20 h-20 mb-3" />
+            <div className="text-xl font-bold text-white">Welcome to Kader</div>
+            <div className="text-sm text-gray-300 mt-2">Your account has been created</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

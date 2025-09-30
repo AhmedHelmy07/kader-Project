@@ -1,29 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import type { Product } from '../services/firestore';
-import { createOrder } from '../services/firestore';
+import { createOrder, setCartForUser, getCartForUser, onCartChanged } from '../services/firestore';
+import { useAuth } from '../auth/AuthContext';
 
 interface CartItem { product: Product; qty: number }
 
 const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+  const { user } = useAuth();
 
   useEffect(() => {
     const raw = localStorage.getItem('cart');
     if (raw) setItems(JSON.parse(raw));
+    if (user?.uid) {
+      (async () => {
+        const remote = await getCartForUser(user.uid);
+        if (remote && remote.length) setItems(remote);
+      })();
+      const off = onCartChanged(user.uid, (it: any[]) => setItems(it));
+      return () => off && off();
+    }
   }, []);
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(items));
+    if (user?.uid) {
+      setCartForUser(user.uid, items).catch(console.error);
+    }
   }, [items]);
 
   const total = items.reduce((s, it) => s + (it.product.price * it.qty), 0);
 
   const handlePay = async () => {
     // simulate payment
-    const orderId = await createOrder({ userEmail: 'guest', items: items.map(i => ({ productId: i.product.id || '', qty: i.qty, price: i.product.price })), total } as any);
+    const userEmail = user?.email || 'guest';
+    const orderId = await createOrder({ userEmail, items: items.map(i => ({ productId: i.product.id || '', qty: i.qty, price: i.product.price })), total } as any);
     localStorage.removeItem('cart');
+    setItems([]);
+    if (user?.uid) await setCartForUser(user.uid, []);
     navigate('#/store');
     alert('Payment simulated. Order ID: ' + orderId);
+  };
+
+  const removeAt = (idx: number) => {
+    const copy = [...items]; copy.splice(idx, 1); setItems(copy);
   };
 
   return (

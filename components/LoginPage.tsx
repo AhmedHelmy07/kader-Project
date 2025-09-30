@@ -16,7 +16,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
     setError('');
     try {
       await auth.signInWithEmailAndPassword(email, password);
-      navigate('#/'); // Go to home after login
+      showWelcome();
     } catch (err: any) {
       setError(err.message);
     }
@@ -26,11 +26,20 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
     setError('');
     try {
       await auth.signInWithPopup(googleProvider);
-      navigate('#/'); // Go to home after login
+      showWelcome();
     } catch (err: any) {
       setError(err.message);
     }
   }
+
+  const [welcome, setWelcome] = useState(false);
+  const showWelcome = () => {
+    setWelcome(true);
+    setTimeout(() => {
+      setWelcome(false);
+      navigate('#/');
+    }, 1400);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-black flex flex-col justify-center items-center p-4">
@@ -48,6 +57,16 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
           <div className="bg-gray-800/70 rounded-lg px-4 py-2 shadow-md">
             <strong className="text-blue-400">Seamless Booking</strong> for patients
           </div>
+          {welcome && (
+            <div className="fixed inset-0 flex items-center justify-center z-50">
+              <div className="bg-black/60 absolute inset-0" />
+              <div className="relative bg-gradient-to-br from-gray-900 to-black p-6 rounded-xl flex flex-col items-center text-center border border-blue-700">
+                <KaderLogo className="w-20 h-20 mb-3" />
+                <div className="text-xl font-bold text-white">Welcome to Kader</div>
+                <div className="text-sm text-gray-300 mt-2">You are now signed in</div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <div className="w-full max-w-md bg-gray-800/90 rounded-2xl shadow-2xl p-8 border border-blue-900">
