@@ -82,6 +82,15 @@ export const listTickets = async () => {
   return snap.docs.map(d => ({ id: d.id, ...(d.data() as Ticket) }));
 };
 
+// Realtime listeners
+export const onTicketsChanged = (cb: (tickets: Ticket[]) => void) => {
+  return ticketsCol.orderBy('createdAt', 'desc').onSnapshot(snap => {
+    const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as Ticket) }));
+    cb(items);
+  });
+};
+
+
 export const updateTicketStatus = async (id: string, status: Ticket['status']) => {
   await ticketsCol.doc(id).set({ status, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
 };
@@ -101,6 +110,13 @@ export const listMessagesByEmail = async (email: string) => {
 export const listRecentMessages = async (limit = 50) => {
   const snap = await messagesCol.orderBy('createdAt', 'desc').limit(limit).get();
   return snap.docs.map(d => ({ id: d.id, ...(d.data() as Message) }));
+};
+
+export const onProductsChanged = (cb: (products: Product[]) => void) => {
+  return productsCol.orderBy('createdAt', 'desc').onSnapshot(snap => {
+    const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as Product) }));
+    cb(items);
+  });
 };
 
 // Orders
