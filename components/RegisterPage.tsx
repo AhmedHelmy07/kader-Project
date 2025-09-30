@@ -30,7 +30,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col justify-center items-center p-4">
       <div className="text-center mb-8">
-  <img src="/images/logo.png" alt="Kader Logo" className="w-24 h-24 mx-auto object-contain" />
+  <KaderLogo className="w-24 h-24 mx-auto" />
         <h1 className="text-4xl font-bold text-white mt-4">Create Your Account</h1>
         <p className="text-gray-400">Join the future of patient mobility.</p>
       </div>
