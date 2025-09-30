@@ -44,6 +44,7 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
                         <div className="ml-10 flex items-center space-x-4">
                            {user ? (
                                 <>
+                                    {user.email === 'kaderwheelchair@gmail.com' && <NavLink path="#/admin" onClick={handleNav}>Admin</NavLink>}
                                     <NavLink path="#/dashboard" onClick={handleNav}>Dashboard</NavLink>
                                     <NavLink path="#/store" onClick={handleNav}>Store</NavLink>
                                     <NavLink path="#/community" onClick={handleNav}>Community</NavLink>
@@ -75,8 +76,9 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
             {isOpen && (
                 <div className="md:hidden" id="mobile-menu">
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                         {user ? (
+                    {user ? (
                                 <>
+                            {user.email === 'kaderwheelchair@gmail.com' && <NavLink path="#/admin" onClick={handleNav}>Admin</NavLink>}
                                     <NavLink path="#/dashboard" onClick={handleNav}>Dashboard</NavLink>
                                     <NavLink path="#/store" onClick={handleNav}>Store</NavLink>
                                     <NavLink path="#/community" onClick={handleNav}>Community</NavLink>
