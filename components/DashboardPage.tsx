@@ -85,18 +85,18 @@ const DashboardPage: React.FC = () => {
 
 
   return (
-    <div className="flex flex-col min-h-screen font-sans bg-gray-50 text-gray-800">
+    <div className="flex flex-col min-h-screen font-sans bg-gradient-to-br from-gray-900 via-blue-900 to-black text-white">
       <Header />
-      <main className="flex-grow flex flex-col p-4 gap-4 overflow-hidden">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <main className="flex-grow flex flex-col p-6 gap-6 overflow-hidden pt-20"> {/* Add top padding to avoid navbar/header overlap */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard title="Total Wheelchairs" value={stats.total} color="#3b82f6" />
             <StatCard title="Available" value={stats.available} color="#22c55e" />
             <StatCard title="In Transit" value={stats.inTransit} color="#f97316" />
             <StatCard title="Needs Assistance" value={stats.needsAssistance} color="#ef4444" />
         </div>
-        <div className="flex-grow flex flex-col lg:flex-row gap-4 overflow-hidden">
-            <div className="flex-grow lg:w-3/4 flex flex-col bg-white rounded-lg shadow-md border border-gray-200 p-4">
-                <h2 className="text-xl font-semibold mb-4 text-gray-700">Hospital Floor Plan Simulation</h2>
+        <div className="flex-grow flex flex-col lg:flex-row gap-6 overflow-hidden">
+            <div className="flex-grow lg:w-3/4 flex flex-col bg-gray-900/80 rounded-2xl shadow-2xl border border-blue-900 p-6">
+                <h2 className="text-2xl font-bold mb-4 text-blue-200">Hospital Floor Plan Simulation</h2>
                 <div className="flex-grow w-full h-full min-h-[400px] lg:min-h-0">
                     <HospitalMap
                         width={MAP_WIDTH}
@@ -110,7 +110,7 @@ const DashboardPage: React.FC = () => {
                 </div>
             </div>
 
-            <aside className="w-full lg:w-1/4 flex flex-col gap-4">
+            <aside className="w-full lg:w-1/4 flex flex-col gap-6">
             <DashboardControls
                 isSimulating={isSimulating}
                 onToggleSimulation={toggleSimulation}
@@ -124,7 +124,7 @@ const DashboardPage: React.FC = () => {
             </aside>
         </div>
       </main>
-      <Footer theme="light" />
+      <Footer theme="dark" />
     </div>
   );
 };

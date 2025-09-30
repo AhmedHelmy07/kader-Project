@@ -15,13 +15,17 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    if (!/^[^@\s]+@(gmail\.com|outlook\.com)$/.test(email)) {
+      setError("Email must be @gmail.com or @outlook.com");
+      return;
+    }
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
     }
     try {
       await auth.createUserWithEmailAndPassword(email, password);
-      navigate('#/dashboard');
+      navigate('#/'); // Go to home after registration
     } catch (err: any) {
       setError(err.message);
     }
@@ -62,21 +66,29 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
             <label className="block text-blue-300 text-sm font-bold mb-2" htmlFor="password">
               Password
             </label>
-            <input 
-                className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                id="password" type="password" placeholder="********"
-                value={password} onChange={(e) => setPassword(e.target.value)} required
-            />
+      <input 
+        className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
+        id="password" type="password" placeholder="********"
+        value={password} onChange={(e) => setPassword(e.target.value)} required
+        minLength={8}
+        autoComplete="new-password"
+        pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$"
+        title="Password must be at least 8 characters and contain letters and numbers."
+      />
           </div>
            <div className="mb-6">
             <label className="block text-blue-300 text-sm font-bold mb-2" htmlFor="confirm-password">
               Confirm Password
             </label>
-            <input 
-                className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                id="confirm-password" type="password" placeholder="********"
-                value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required
-            />
+      <input 
+        className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
+        id="confirm-password" type="password" placeholder="********"
+        value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required
+        minLength={8}
+        autoComplete="new-password"
+        pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$"
+        title="Password must be at least 8 characters and contain letters and numbers."
+      />
           </div>
           <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg" type="submit">
             Register
