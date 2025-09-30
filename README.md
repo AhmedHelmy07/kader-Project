@@ -122,8 +122,3 @@ Recommended production approach: use Firebase Admin SDK to set custom claims (e.
 - Admin unlock says "No admin password set": create a doc in `admin_pass` collection with field `password` in Firestore Console.
 - If client writes are rejected: check Firestore security rules, or use Console/Admin SDK to seed data.
 - Favicon didn't update: clear cache or open in incognito/private window.
-
-
----
-
-If you'd like I can implement the product image upload in the Admin page next — I already added `services/storage.ts` and can wire it into the add/edit product flow with an upload progress indicator and toasts.
