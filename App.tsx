@@ -6,6 +6,12 @@ import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import { Navbar } from './components/Navbar';
 import { PlaceholderPage } from './components/PlaceholderPage';
+import StorePage from './components/StorePage';
+import CartPage from './components/CartPage';
+import CommunityPage from './components/CommunityPage';
+import SupportPage from './components/SupportPage';
+import ContactPage from './components/ContactPage';
+import AdminPage from './components/AdminPage';
 
 const AppRouter: React.FC = () => {
   const [route, setRoute] = useState(window.location.hash || '#/');
@@ -38,14 +44,16 @@ const AppRouter: React.FC = () => {
   }
   
   const renderPage = () => {
-    switch (route) {
-        case '#/dashboard': return <DashboardPage />;
-        case '#/store': return <PlaceholderPage title="Kader Store" message="Our online store is coming soon! Browse smart wheelchairs and upgrade kits."/>;
-        case '#/community': return <PlaceholderPage title="Community Hub" message="A place for users to share feedback and experiences. Coming soon!"/>;
-        case '#/tickets': return <PlaceholderPage title="Support Tickets" message="Create and manage your maintenance and support requests here."/>;
-        case '#/contact': return <PlaceholderPage title="Contact Us" message="Get in touch with the Kaderoon Team through our contact page."/>;
-        default: return <HomePage navigate={navigate} />;
-    }
+  switch (route) {
+    case '#/dashboard': return <DashboardPage />;
+    case '#/store': return <StorePage navigate={navigate} />;
+    case '#/cart': return <CartPage navigate={navigate} />;
+    case '#/community': return <CommunityPage />;
+    case '#/tickets': return <SupportPage />;
+    case '#/contact': return <ContactPage />;
+    case '#/admin': return <AdminPage />;
+    default: return <HomePage navigate={navigate} />;
+  }
   }
 
   return (
