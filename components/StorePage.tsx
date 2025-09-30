@@ -51,12 +51,14 @@ const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
 
   return (
     <div className="min-h-screen p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Store</h2>
-        <button onClick={() => navigate('#/cart')} className="bg-blue-600 px-3 py-2 rounded text-white">Cart ({cart.reduce((s,i)=>s+i.qty,0)})</button>
-      </div>
-      <div className="grid md:grid-cols-3 gap-6">
-        {products.map(p => <ProductCard key={p.id} product={p} onAdd={(prod)=>addToCart(prod)} />)}
+      <div className="max-w-6xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Store</h2>
+          <button onClick={() => navigate('#/cart')} className="bg-blue-600 px-3 py-2 rounded text-white">Cart ({cart.reduce((s,i)=>s+i.qty,0)})</button>
+        </div>
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {products.map(p => <ProductCard key={p.id} product={p} onAdd={(prod)=>addToCart(prod)} />)}
+        </div>
       </div>
     </div>
   );

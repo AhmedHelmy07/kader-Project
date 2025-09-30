@@ -4,8 +4,8 @@ import type { Product } from '../services/firestore';
 const ProductCard: React.FC<{ product: Product; onAdd?: (p: Product) => void }> = ({ product, onAdd }) => {
   return (
     <div className="bg-gradient-to-br from-black/20 to-black/10 border border-gray-700 rounded-xl overflow-hidden shadow-lg flex flex-col">
-      <div className="h-48 w-full bg-gray-800">
-        <img src={product.image || '/images/7.jpg'} alt={product.title} className="w-full h-full object-cover" />
+      <div className="h-56 w-full bg-gray-800 flex items-center justify-center">
+        <img src={product.image || '/images/7.jpg'} alt={product.title} className="max-h-full w-full object-contain object-center" />
       </div>
       <div className="p-4 flex-1 flex flex-col">
         <h3 className="font-semibold text-lg text-white mb-1">{product.title}</h3>

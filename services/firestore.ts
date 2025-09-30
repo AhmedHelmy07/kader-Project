@@ -189,6 +189,42 @@ export const onCartChanged = (uid: string, cb: (items: any[]) => void) => {
   });
 };
 
+// Orders realtime
+export const onOrdersChanged = (cb: (orders: Order[]) => void) => {
+  return ordersCol.orderBy('createdAt', 'desc').onSnapshot(snap => {
+    const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as Order) }));
+    cb(items);
+  });
+};
+
+export const deleteCommunityMessage = async (id: string) => {
+  await messagesCol.doc(id).delete();
+};
+
+export const deleteContactMessage = async (id: string) => {
+  await contactCol.doc(id).delete();
+};
+
+// Admin password store (single doc in collection 'admin_pass')
+const adminPassCol = firestore.collection('admin_pass');
+export const setAdminPassword = async (password: string) => {
+  const docs = await adminPassCol.limit(1).get();
+  if (!docs.empty) {
+    const id = docs.docs[0].id;
+    await adminPassCol.doc(id).set({ password }, { merge: true });
+    return id;
+  }
+  const ref = await adminPassCol.add({ password });
+  return ref.id;
+};
+
+export const getAdminPassword = async () => {
+  const docs = await adminPassCol.limit(1).get();
+  if (docs.empty) return null;
+  const d = docs.docs[0];
+  return (d.data() as any).password as string;
+};
+
 export default {
   listProducts,
   getProduct,
@@ -205,4 +241,9 @@ export default {
   updateOrderStatus,
   getUserDoc,
   setUserAdmin,
+  onOrdersChanged,
+  deleteCommunityMessage,
+  deleteContactMessage,
+  setAdminPassword,
+  getAdminPassword,
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { createTicket, listTickets, onTicketsChanged } from '../services/firestore';
 import { useAuth } from '../auth/AuthContext';
 import { KaderLogo } from './icons/KaderLogo';
+import { useToast } from './Toast';
 
 const SupportPage: React.FC = () => {
   const { user } = useAuth();
@@ -15,16 +16,18 @@ const SupportPage: React.FC = () => {
     return () => off();
   }, [user]);
 
+  const toast = useToast();
   const submit = async () => {
-    if (!user) { alert('Please login to create tickets'); return; }
-    if (!subject.trim() || !message.trim()) return alert('Please fill subject and message');
+    if (!user) { return toast?.push ? toast.push('Please login to create tickets') : alert('Please login to create tickets'); }
+    if (!subject.trim() || !message.trim()) return toast?.push ? toast.push('Please fill subject and message') : alert('Please fill subject and message');
     await createTicket({ userEmail: user.email || 'unknown', subject: subject.trim(), message: message.trim(), status: 'open' });
     setSubject(''); setMessage('');
+    toast?.push?.('Ticket created');
   };
 
   return (
     <div className="min-h-screen p-6 flex justify-center">
-      <div className="w-4/5 max-w-3xl mx-auto bg-gradient-to-br from-black/40 to-black/20 rounded p-6">
+      <div className="w-full max-w-4xl mx-auto bg-gradient-to-br from-gray-900/60 to-gray-800/40 rounded p-6 text-gray-100">
         <div className="flex items-center gap-4 mb-4">
           <KaderLogo className="w-12 h-12" />
           <div>
@@ -33,9 +36,9 @@ const SupportPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="mb-6 bg-black/20 p-4 rounded">
-          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" className="w-full p-3 mb-3 bg-transparent border rounded text-gray-200" />
-          <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Describe the issue" className="w-full p-3 bg-transparent rounded text-gray-200" rows={4} />
+        <div className="mb-6 bg-gray-900/60 p-4 rounded border border-gray-700">
+          <input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Subject" className="w-full p-3 mb-3 bg-transparent border rounded text-gray-100 placeholder-gray-400" />
+          <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Describe the issue" className="w-full p-3 bg-transparent rounded text-gray-100 placeholder-gray-400" rows={4} />
           <div className="flex justify-end mt-3">
             <button onClick={submit} className="bg-blue-600 px-4 py-2 rounded text-white">Create Ticket</button>
           </div>

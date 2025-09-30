@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import type { Product } from '../services/firestore';
 import { createOrder, setCartForUser, getCartForUser, onCartChanged } from '../services/firestore';
+import { useToast } from './Toast';
 import { useAuth } from '../auth/AuthContext';
 
 interface CartItem { product: Product; qty: number }
@@ -8,26 +9,42 @@ interface CartItem { product: Product; qty: number }
 const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => {
   const [items, setItems] = useState<CartItem[]>([]);
   const { user } = useAuth();
+  const toast = useToast();
+
+  const itemsRef = useRef(items);
+  useEffect(() => { itemsRef.current = items; }, [items]);
 
   useEffect(() => {
     const raw = localStorage.getItem('cart');
     if (raw) setItems(JSON.parse(raw));
+    let off: any;
     if (user?.uid) {
       (async () => {
         const remote = await getCartForUser(user.uid);
         if (remote && remote.length) setItems(remote);
+        off = onCartChanged(user.uid, (it: any[]) => {
+          // avoid updating if arrays are deeply equal-ish to prevent re-renders/blink
+          try {
+            const a = JSON.stringify(it || []);
+            const b = JSON.stringify(itemsRef.current || []);
+            if (a !== b) setItems(it);
+          } catch (e) { setItems(it); }
+        });
       })();
-      const off = onCartChanged(user.uid, (it: any[]) => setItems(it));
-      return () => off && off();
     }
-  }, []);
+    return () => off && off();
+  }, [user]);
 
+  // debounce writes to localStorage and remote
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(items));
-    if (user?.uid) {
-      setCartForUser(user.uid, items).catch(console.error);
-    }
-  }, [items]);
+    const id = setTimeout(() => {
+      localStorage.setItem('cart', JSON.stringify(items));
+      if (user?.uid) {
+        setCartForUser(user.uid, items).catch(console.error);
+      }
+    }, 150);
+    return () => clearTimeout(id);
+  }, [items, user]);
 
   const total = items.reduce((s, it) => s + (it.product.price * it.qty), 0);
 
@@ -39,7 +56,9 @@ const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
     setItems([]);
     if (user?.uid) await setCartForUser(user.uid, []);
     navigate('#/store');
-    alert('Payment simulated. Order ID: ' + orderId);
+    // use a simple alert fallback; Toasts are available globally but keep backward safe
+    if (toast?.push) toast.push('Payment simulated. Order ID: ' + orderId);
+    else alert('Payment simulated. Order ID: ' + orderId);
   };
 
   const removeAt = (idx: number) => {
