@@ -132,7 +132,7 @@ const AdminPage: React.FC = () => {
     <div className="min-h-screen p-8 bg-gray-50 text-black">
       <div className="max-w-[1200px] mx-auto">
         <div className="flex items-center gap-4 mb-6">
-          <div className="p-2 rounded bg-white shadow"><KaderLogo className="w-14 h-14" /></div>
+          <div className="p-2 rounded bg-black shadow"><KaderLogo className="w-14 h-14" /></div>
           <div>
             <h2 className="text-3xl font-semibold">Admin Dashboard</h2>
             <div className="text-sm text-gray-600">Manage products, orders, messages and tickets in realtime</div>
