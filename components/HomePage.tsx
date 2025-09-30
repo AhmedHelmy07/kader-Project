@@ -21,16 +21,31 @@ const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
             <Navbar navigate={navigate} />
 
             <main>
-                {/* Hero Section */}
-                <section className="relative text-center py-32 sm:py-48 px-4 h-[80vh] flex flex-col justify-center items-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1582719478212-c85ab65348b3?q=80&w=2070&auto=format&fit=crop')", backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed'}}>
+                {/* Modern Hero Section with Logo */}
+                <section className="relative text-center py-32 sm:py-48 px-4 h-[80vh] flex flex-col justify-center items-center bg-gradient-to-br from-gray-900 via-blue-900 to-black">
                     <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
-                    <div className="relative z-10">
-                        <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold mb-4 leading-tight">
+                    <div className="relative z-10 flex flex-col items-center">
+                        <div className="mb-6">
+                            {/* Logo icon */}
+                            <img src={require('../images/logo.png')} alt="Kader Logo" className="w-32 h-32 mx-auto drop-shadow-lg rounded-full border-4 border-blue-600 bg-white" />
+                        </div>
+                        <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold mb-4 leading-tight tracking-tight text-white">
                             Revolutionizing Patient Mobility
                         </h1>
-                        <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-                            A Smart Autonomous Wheelchair with Indoor Navigation and AI-based Obstacle Avoidance.
+                        <p className="text-xl sm:text-2xl text-blue-200 max-w-3xl mx-auto mb-8">
+                            Smart Autonomous Wheelchair System with Indoor Navigation, AI-based Obstacle Avoidance, and Real-time Fleet Management.
                         </p>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-gray-300 text-base mb-8">
+                            <div className="bg-gray-800/70 rounded-lg px-4 py-2 shadow-md">
+                                <strong className="text-blue-400">AI Navigation</strong> for safe, efficient transport
+                            </div>
+                            <div className="bg-gray-800/70 rounded-lg px-4 py-2 shadow-md">
+                                <strong className="text-blue-400">Real-time Monitoring</strong> for staff & admins
+                            </div>
+                            <div className="bg-gray-800/70 rounded-lg px-4 py-2 shadow-md">
+                                <strong className="text-blue-400">Seamless Booking</strong> for patients
+                            </div>
+                        </div>
                         <button onClick={() => navigate('#/register')} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105">
                             Get Started
                         </button>
