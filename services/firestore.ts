@@ -5,6 +5,7 @@ import firebase from 'firebase/compat/app';
 const productsCol = firestore.collection('products');
 const ticketsCol = firestore.collection('tickets');
 const messagesCol = firestore.collection('messages');
+const contactCol = firestore.collection('contact_messages');
 const ordersCol = firestore.collection('orders');
 const usersCol = firestore.collection('users');
 
@@ -102,6 +103,12 @@ export const postMessage = async (m: Message) => {
   return ref.id;
 };
 
+export const postContactMessage = async (m: Message) => {
+  const data = { ...m, createdAt: firebase.firestore.FieldValue.serverTimestamp() } as any;
+  const ref = await contactCol.add(data);
+  return ref.id;
+};
+
 export const listMessagesByEmail = async (email: string) => {
   const snap = await messagesCol.where('userEmail', '==', email).orderBy('createdAt', 'desc').get();
   return snap.docs.map(d => ({ id: d.id, ...(d.data() as Message) }));
@@ -110,6 +117,25 @@ export const listMessagesByEmail = async (email: string) => {
 export const listRecentMessages = async (limit = 50) => {
   const snap = await messagesCol.orderBy('createdAt', 'desc').limit(limit).get();
   return snap.docs.map(d => ({ id: d.id, ...(d.data() as Message) }));
+};
+
+export const listContactMessages = async (limit = 200) => {
+  const snap = await contactCol.orderBy('createdAt', 'desc').limit(limit).get();
+  return snap.docs.map(d => ({ id: d.id, ...(d.data() as Message) }));
+};
+
+export const onMessagesChanged = (cb: (messages: Message[]) => void, limit = 100) => {
+  return messagesCol.orderBy('createdAt', 'desc').limit(limit).onSnapshot(snap => {
+    const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as Message) }));
+    cb(items);
+  });
+};
+
+export const onContactMessagesChanged = (cb: (messages: Message[]) => void, limit = 200) => {
+  return contactCol.orderBy('createdAt', 'desc').limit(limit).onSnapshot(snap => {
+    const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as Message) }));
+    cb(items);
+  });
 };
 
 export const onProductsChanged = (cb: (products: Product[]) => void) => {

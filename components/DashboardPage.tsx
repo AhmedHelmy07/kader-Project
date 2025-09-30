@@ -96,7 +96,7 @@ const DashboardPage: React.FC = () => {
         </div>
         <div className="flex-grow flex flex-col lg:flex-row gap-6 overflow-hidden">
             <div className="flex-grow lg:w-3/4 flex flex-col bg-gray-900/80 rounded-2xl shadow-2xl border border-blue-900 p-6">
-                <h2 className="text-2xl font-bold mb-4 text-blue-200">Hospital Floor Plan Simulation</h2>
+                <h2 className="text-2xl font-bold mb-4 text-blue-200">Orgnization Floor Plan Simulation</h2>
                 <div className="flex-grow w-full h-full min-h-[400px] lg:min-h-0">
                     <HospitalMap
                         width={MAP_WIDTH}
