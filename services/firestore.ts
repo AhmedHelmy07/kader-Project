@@ -9,6 +9,8 @@ const contactCol = firestore.collection('contact_messages');
 const ordersCol = firestore.collection('orders');
 const usersCol = firestore.collection('users');
 const cartsCol = firestore.collection('carts');
+const coursesCol = firestore.collection('courses');
+const jobsCol = firestore.collection('jobs');
 
 export type Product = {
   id?: string;
@@ -43,6 +45,35 @@ export type Order = {
   items: Array<{ productId: string; qty: number; price: number }>; 
   total: number;
   status: 'pending' | 'paid' | 'shipped' | 'cancelled';
+  createdAt?: firebase.firestore.FieldValue;
+};
+
+export type Course = {
+  id?: string;
+  title: string;
+  description: string;
+  instructor: string;
+  duration: string;
+  level: 'Beginner' | 'Intermediate' | 'Advanced';
+  category: string;
+  image?: string;
+  price?: number;
+  enrolled?: number;
+  rating?: number;
+  createdAt?: firebase.firestore.FieldValue;
+};
+
+export type Job = {
+  id?: string;
+  title: string;
+  company: string;
+  location: string;
+  type: 'Full-time' | 'Part-time' | 'Contract' | 'Remote';
+  salary?: string;
+  description: string;
+  requirements: string;
+  posted?: string;
+  category: string;
   createdAt?: firebase.firestore.FieldValue;
 };
 
@@ -223,6 +254,72 @@ export const getAdminPassword = async () => {
   if (docs.empty) return null;
   const d = docs.docs[0];
   return (d.data() as any).password as string;
+};
+
+// Courses
+export const createOrUpdateCourse = async (course: Course) => {
+  const data = { ...course, createdAt: firebase.firestore.FieldValue.serverTimestamp() } as any;
+  if (course.id) {
+    await coursesCol.doc(course.id).set(data, { merge: true });
+    return course.id;
+  }
+  const ref = await coursesCol.add(data);
+  return ref.id;
+};
+
+export const listCourses = async (): Promise<Course[]> => {
+  const snap = await coursesCol.orderBy('createdAt', 'desc').get();
+  return snap.docs.map(d => ({ id: d.id, ...(d.data() as Course) }));
+};
+
+export const getCourse = async (id: string): Promise<Course | null> => {
+  const doc = await coursesCol.doc(id).get();
+  if (!doc.exists) return null;
+  return { id: doc.id, ...(doc.data() as Course) };
+};
+
+export const deleteCourse = async (id: string) => {
+  await coursesCol.doc(id).delete();
+};
+
+export const onCoursesChanged = (cb: (courses: Course[]) => void) => {
+  return coursesCol.orderBy('createdAt', 'desc').onSnapshot(snap => {
+    const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as Course) }));
+    cb(items);
+  });
+};
+
+// Jobs
+export const createOrUpdateJob = async (job: Job) => {
+  const data = { ...job, createdAt: firebase.firestore.FieldValue.serverTimestamp() } as any;
+  if (job.id) {
+    await jobsCol.doc(job.id).set(data, { merge: true });
+    return job.id;
+  }
+  const ref = await jobsCol.add(data);
+  return ref.id;
+};
+
+export const listJobs = async (): Promise<Job[]> => {
+  const snap = await jobsCol.orderBy('createdAt', 'desc').get();
+  return snap.docs.map(d => ({ id: d.id, ...(d.data() as Job) }));
+};
+
+export const getJob = async (id: string): Promise<Job | null> => {
+  const doc = await jobsCol.doc(id).get();
+  if (!doc.exists) return null;
+  return { id: doc.id, ...(doc.data() as Job) };
+};
+
+export const deleteJob = async (id: string) => {
+  await jobsCol.doc(id).delete();
+};
+
+export const onJobsChanged = (cb: (jobs: Job[]) => void) => {
+  return jobsCol.orderBy('createdAt', 'desc').onSnapshot(snap => {
+    const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as Job) }));
+    cb(items);
+  });
 };
 
 export default {

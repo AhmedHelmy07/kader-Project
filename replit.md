@@ -13,9 +13,10 @@ A React + TypeScript smart wheelchair dashboard application using Vite and Fireb
 - User authentication (Firebase Auth)
 - Product store with cart and order creation
 - Cart persistence (localStorage + Firestore)
+- **Kader Hub** - Professional courses and job opportunities platform
 - Community messages and contact form
 - Support tickets with admin status updates
-- Admin dashboard for managing products, tickets, orders, and messages
+- Admin dashboard for managing products, tickets, orders, messages, courses, and jobs
 
 ## Project Architecture
 
@@ -41,6 +42,8 @@ A React + TypeScript smart wheelchair dashboard application using Vite and Fireb
 
 ### Firebase Collections
 - `products` - Product catalog (title, description, price, image, stock)
+- `courses` - Educational courses (title, description, instructor, duration, level, category, price, enrolled, rating)
+- `jobs` - Job opportunities (title, company, location, type, salary, description, requirements, category, posted)
 - `tickets` - Support tickets with status tracking
 - `messages` - Community posts
 - `contact_messages` - Contact form submissions
@@ -63,7 +66,17 @@ A React + TypeScript smart wheelchair dashboard application using Vite and Fireb
 - **Auto-restart:** Yes (after package changes)
 
 ## Recent Changes
-- **October 17, 2025:** 
+- **October 17, 2025 (Latest):**
+  - **NEW: Kader Hub Feature** - Added comprehensive courses and jobs platform
+    - Created Firestore CRUD operations for courses and jobs collections
+    - Built KaderHubPage with professional UI featuring filtering, search, and responsive cards
+    - Added admin sections for managing courses and jobs with full CRUD capabilities
+    - Redesigned HomePage with professional Kader Hub showcase section
+    - Updated routing and navigation to include Kader Hub throughout application
+  - Enhanced Community, Support, and Contact pages with glassmorphism UI
+  - Created enterprise-grade Admin Dashboard with comprehensive management tabs
+
+- **October 17, 2025 (Initial Setup):** 
   - Configured Vite server to use port 5000 for Replit
   - Added HMR configuration for Replit proxy support
   - Created workflow for frontend development
@@ -86,6 +99,9 @@ To fully use the app, you'll need to:
 - Toast notifications available via `useToast()` hook
 - Admin access via password unlock or per-user admin flag
 - Product images stored in Firebase Storage
+- **Kader Hub** provides filtering by categories and search functionality
+- Professional UI/UX with glassmorphism effects and smooth animations throughout
+- Each major section (Community, Support, Contact, Admin, Kader Hub) has unique color themes
 
 ## TODOs & Next Steps
 - Wire product image upload in Admin form

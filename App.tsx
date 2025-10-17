@@ -13,6 +13,7 @@ import CommunityPage from './components/CommunityPage';
 import SupportPage from './components/SupportPage';
 import ContactPage from './components/ContactPage';
 import AdminPage from './components/AdminPage';
+import KaderHubPage from './components/KaderHubPage';
 
 const AppRouter: React.FC = () => {
   const [route, setRoute] = useState(window.location.hash || '#/');
@@ -52,6 +53,7 @@ const AppRouter: React.FC = () => {
     case '#/community': return <CommunityPage />;
     case '#/tickets': return <SupportPage />;
     case '#/contact': return <ContactPage />;
+    case '#/hub': return <KaderHubPage />;
     case '#/admin': return <AdminPage />;
     default: return <HomePage navigate={navigate} />;
   }
