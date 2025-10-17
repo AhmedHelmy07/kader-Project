@@ -16,10 +16,14 @@ interface HomePageProps {
 }
 
 const FeatureCard: React.FC<{ icon: string; title: string; children: React.ReactNode }> = ({ icon, title, children }) => (
-    <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 p-6 rounded-lg text-center transform hover:scale-105 hover:bg-gray-800 transition-all duration-300">
-        <div className="text-blue-400 text-4xl mb-4 mx-auto">{icon}</div>
-        <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-        <p className="text-gray-400">{children}</p>
+    <div className="group relative bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm border border-gray-700 p-6 rounded-xl text-center transform hover:scale-105 hover:border-blue-500 transition-all duration-500 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/0 to-blue-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-500"></div>
+        <div className="relative z-10">
+            <div className="text-5xl mb-4 mx-auto transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">{icon}</div>
+            <h3 className="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors duration-300">{title}</h3>
+            <p className="text-gray-400 group-hover:text-gray-300 transition-colors duration-300">{children}</p>
+        </div>
+        <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
     </div>
 );
 
@@ -36,53 +40,79 @@ const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
             <Navbar navigate={navigate} />
 
             <main>
-                {/* Modern Hero Section with Logo */}
-                <section className="relative text-center py-32 sm:py-48 px-4 h-[80vh] flex flex-col justify-center items-center bg-gradient-to-br from-gray-900 via-blue-900 to-black">
-                    <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+                <section className="relative text-center py-32 sm:py-48 px-4 min-h-[90vh] flex flex-col justify-center items-center bg-gradient-to-br from-gray-900 via-blue-900 to-black overflow-hidden">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(59,130,246,0.1),transparent_50%),radial-gradient(circle_at_70%_50%,rgba(147,51,234,0.1),transparent_50%)]"></div>
+                    <div className="absolute inset-0">
+                        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+                        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+                    </div>
                     <div className="relative z-10 flex flex-col items-center">
-                        <div className="mb-6">
-                            {/* Logo icon with dark circle */}
-                            <span className="bg-gray-900 rounded-full p-4 flex items-center justify-center border-4 border-blue-600 drop-shadow-lg">
+                        <div className="mb-8 animate-float">
+                            <span className="relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-full p-6 flex items-center justify-center border-4 border-blue-600 shadow-2xl shadow-blue-500/50">
                                 <img src={logo} alt="Kader Logo" className="w-24 h-24" />
+                                <span className="absolute inset-0 rounded-full border-4 border-blue-400 animate-ping opacity-20"></span>
                             </span>
                         </div>
-                        <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold mb-4 leading-tight tracking-tight text-white">
+                        <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tight bg-gradient-to-r from-white via-blue-100 to-white bg-clip-text text-transparent animate-fade-in">
                             Revolutionizing Patient Mobility
                         </h1>
-                        <p className="text-xl sm:text-2xl text-blue-200 max-w-3xl mx-auto mb-8">
+                        <p className="text-xl sm:text-2xl text-blue-200 max-w-3xl mx-auto mb-10 animate-fade-in-delay">
                             Smart Autonomous Wheelchair System with Indoor Navigation, AI-based Obstacle Avoidance, and Real-time Fleet Management.
                         </p>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-gray-300 text-base mb-8">
-                            <div className="bg-gray-800/70 rounded-lg px-4 py-2 shadow-md">
-                                <strong className="text-blue-400">AI Navigation</strong> for safe, efficient transport
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-gray-300 text-base mb-10 animate-fade-in-delay-2">
+                            <div className="group bg-gray-800/80 backdrop-blur-sm rounded-xl px-6 py-3 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 border border-gray-700 hover:border-blue-500">
+                                <strong className="text-blue-400 group-hover:text-blue-300 transition-colors">AI Navigation</strong> for safe, efficient transport
                             </div>
-                            <div className="bg-gray-800/70 rounded-lg px-4 py-2 shadow-md">
-                                <strong className="text-blue-400">Real-time Monitoring</strong> for staff & admins
+                            <div className="group bg-gray-800/80 backdrop-blur-sm rounded-xl px-6 py-3 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 border border-gray-700 hover:border-blue-500">
+                                <strong className="text-blue-400 group-hover:text-blue-300 transition-colors">Real-time Monitoring</strong> for staff & admins
                             </div>
-                            <div className="bg-gray-800/70 rounded-lg px-4 py-2 shadow-md">
-                                <strong className="text-blue-400">Seamless Booking</strong> for patients
+                            <div className="group bg-gray-800/80 backdrop-blur-sm rounded-xl px-6 py-3 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 border border-gray-700 hover:border-blue-500">
+                                <strong className="text-blue-400 group-hover:text-blue-300 transition-colors">Seamless Booking</strong> for patients
                             </div>
                         </div>
-                        <button onClick={() => navigate('#/register')} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105">
-                            Get Started
+                        <button
+                            onClick={() => navigate('#/register')}
+                            className="group relative bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-10 rounded-xl text-lg transition-all duration-300 shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 hover:scale-105 overflow-hidden animate-fade-in-delay-3"
+                        >
+                            <span className="absolute inset-0 w-0 bg-white/20 transition-all duration-300 group-hover:w-full"></span>
+                            <span className="relative flex items-center gap-2">
+                                Get Started
+                                <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                                </svg>
+                            </span>
                         </button>
                     </div>
                 </section>
 
-                {/* Image slider before Why Kader */}
-                <section className="py-12 px-4 flex justify-center">
-                    <div className="w-4/5 max-w-4xl">
-                        <div className="relative rounded-xl overflow-hidden shadow-2xl">
-                            <img src={images[idx]} alt={`slide-${idx}`} className="w-full h-64 object-cover rounded-xl transition-all duration-700" />
-                            <div className="absolute left-4 bottom-4 bg-black/40 text-white px-3 py-1 rounded">Photo {idx+1} of {images.length}</div>
+                <section className="py-16 px-4 flex justify-center bg-gray-900/50">
+                    <div className="w-full max-w-5xl">
+                        <div className="relative rounded-2xl overflow-hidden shadow-2xl group">
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+                            <img src={images[idx]} alt={`slide-${idx}`} className="w-full h-96 object-cover transition-all duration-1000 group-hover:scale-110" />
+                            <div className="absolute left-6 bottom-6 z-20">
+                                <div className="bg-blue-600/90 backdrop-blur-sm text-white px-5 py-2 rounded-lg shadow-xl font-semibold">
+                                    Photo {idx+1} of {images.length}
+                                </div>
+                            </div>
+                            <div className="absolute right-6 bottom-6 z-20 flex gap-2">
+                                {images.map((_, i) => (
+                                    <div
+                                        key={i}
+                                        className={`h-2 rounded-full transition-all duration-300 ${
+                                            i === idx ? 'w-8 bg-blue-500' : 'w-2 bg-white/50'
+                                        }`}
+                                    ></div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </section>
 
-                {/* Features Section */}
-                <section id="features" className="py-20 sm:py-28 bg-gray-900 px-4">
+                <section id="features" className="py-20 sm:py-28 bg-gradient-to-b from-gray-900 to-black px-4">
                     <div className="max-w-6xl mx-auto">
-                        <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-center">Why Kader Project?</h2>
+                        <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Why Kader Project?</h2>
+                        <p className="text-gray-400 text-center mb-16 text-lg">Cutting-edge technology for modern healthcare mobility</p>
                         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                             <FeatureCard icon="🤖" title="Autonomous Navigation">
                                 AI-powered pathfinding ensures safe and efficient transport within complex hospital environments.
@@ -100,19 +130,34 @@ const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                     </div>
                 </section>
 
-                {/* How it Works Section */}
-                 <section id="how-it-works" className="py-20 sm:py-28 px-4">
-                    <div className="max-w-4xl mx-auto">
-                         <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-center">Simple, Safe, and Efficient</h2>
+                <section id="how-it-works" className="py-20 sm:py-28 px-4 bg-gray-900">
+                    <div className="max-w-5xl mx-auto">
+                         <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-center bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Simple, Safe, and Efficient</h2>
+                         <p className="text-gray-400 text-center mb-16 text-lg">How the Kader system works in 4 easy steps</p>
                          <div className="flex flex-col md:flex-row items-center gap-12">
-                            <div className="md:w-1/2">
-                                <img src={hospitalFloor} alt="Hospital hallway" className="rounded-lg shadow-2xl"/>
+                            <div className="md:w-1/2 group">
+                                <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+                                    <img src={hospitalFloor} alt="Hospital hallway" className="w-full transform group-hover:scale-110 transition-transform duration-700"/>
+                                    <div className="absolute inset-0 bg-gradient-to-t from-blue-600/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                </div>
                             </div>
-                            <div className="md:w-1/2 space-y-6 text-gray-300 text-lg">
-                                <p><strong className="text-white">1. Book a Ride:</strong> A patient or staff member requests a wheelchair via the mobile app.</p>
-                                <p><strong className="text-white">2. Navigate Autonomously:</strong> The nearest available chair travels to the patient, avoiding obstacles.</p>
-                                <p><strong className="text-white">3. Reach the Destination:</strong> The patient is safely transported to their appointment location.</p>
-                                <p><strong className="text-white">4. Monitor and Manage:</strong> Admins oversee the entire operation from the central dashboard.</p>
+                            <div className="md:w-1/2 space-y-6">
+                                {[
+                                    { num: '1', title: 'Book a Ride', desc: 'A patient or staff member requests a wheelchair via the mobile app.' },
+                                    { num: '2', title: 'Navigate Autonomously', desc: 'The nearest available chair travels to the patient, avoiding obstacles.' },
+                                    { num: '3', title: 'Reach the Destination', desc: 'The patient is safely transported to their appointment location.' },
+                                    { num: '4', title: 'Monitor and Manage', desc: 'Admins oversee the entire operation from the central dashboard.' }
+                                ].map((step) => (
+                                    <div key={step.num} className="group flex gap-4 p-4 rounded-xl bg-gray-800/50 border border-gray-700 hover:border-blue-500 hover:bg-gray-800 transition-all duration-300">
+                                        <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                            {step.num}
+                                        </div>
+                                        <div>
+                                            <h3 className="text-white font-bold text-lg mb-1 group-hover:text-blue-400 transition-colors">{step.title}</h3>
+                                            <p className="text-gray-400 group-hover:text-gray-300 transition-colors">{step.desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                          </div>
                     </div>

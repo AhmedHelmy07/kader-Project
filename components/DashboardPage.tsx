@@ -9,10 +9,17 @@ import { WheelchairStatus } from '../types';
 import { MAP_WIDTH, MAP_HEIGHT } from '../constants';
 import { Footer } from './Footer';
 
-const StatCard: React.FC<{title: string, value: string | number, color: string}> = ({ title, value, color }) => (
-    <div className="bg-white p-4 rounded-lg shadow-md border-l-4" style={{ borderLeftColor: color }}>
-        <p className="text-sm text-gray-500">{title}</p>
-        <p className="text-2xl font-bold text-gray-800">{value}</p>
+const StatCard: React.FC<{title: string, value: string | number, color: string, icon?: string}> = ({ title, value, color, icon }) => (
+    <div className="group relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:shadow-2xl border border-gray-700 hover:border-blue-500 transition-all duration-300 overflow-hidden hover:scale-105">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/0 to-blue-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-500"></div>
+        <div className="relative z-10 flex items-center justify-between">
+            <div>
+                <p className="text-sm text-gray-400 mb-1 group-hover:text-gray-300 transition-colors">{title}</p>
+                <p className="text-3xl font-bold text-white group-hover:text-blue-400 transition-colors">{value}</p>
+            </div>
+            {icon && <div className="text-4xl opacity-20 group-hover:opacity-40 transition-opacity">{icon}</div>}
+        </div>
+        <div className="absolute bottom-0 left-0 w-full h-1 transition-all duration-300" style={{ background: `linear-gradient(90deg, ${color}, transparent)` }}></div>
     </div>
 );
 
@@ -89,10 +96,10 @@ const DashboardPage: React.FC = () => {
       <Header />
       <main className="flex-grow flex flex-col p-6 gap-6 overflow-hidden pt-20"> {/* Add top padding to avoid navbar/header overlap */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            <StatCard title="Total Wheelchairs" value={stats.total} color="#3b82f6" />
-            <StatCard title="Available" value={stats.available} color="#22c55e" />
-            <StatCard title="In Transit" value={stats.inTransit} color="#f97316" />
-            <StatCard title="Needs Assistance" value={stats.needsAssistance} color="#ef4444" />
+            <StatCard title="Total Wheelchairs" value={stats.total} color="#3b82f6" icon="♿" />
+            <StatCard title="Available" value={stats.available} color="#22c55e" icon="✓" />
+            <StatCard title="In Transit" value={stats.inTransit} color="#f97316" icon="🚀" />
+            <StatCard title="Needs Assistance" value={stats.needsAssistance} color="#ef4444" icon="⚠️" />
         </div>
         <div className="flex-grow flex flex-col lg:flex-row gap-6 overflow-hidden">
             <div className="flex-grow lg:w-3/4 flex flex-col bg-gray-900/80 rounded-2xl shadow-2xl border border-blue-900 p-6">
