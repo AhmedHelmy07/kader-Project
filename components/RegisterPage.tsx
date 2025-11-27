@@ -84,7 +84,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
               </label>
               <input 
                   className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  id="firstName" type="text" placeholder="John"
+                  id="firstName" type="text" placeholder="First Name"
                   value={firstName} onChange={(e) => setFirstName(e.target.value)}
               />
             </div>
@@ -94,7 +94,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
               </label>
               <input 
                   className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                  id="lastName" type="text" placeholder="Doe"
+                  id="lastName" type="text" placeholder="Last Name"
                   value={lastName} onChange={(e) => setLastName(e.target.value)}
               />
             </div>
@@ -115,7 +115,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
             </label>
             <input 
                 className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                id="emergencyContact" type="tel" placeholder="+201234567890"
+                id="emergencyContact" type="tel" placeholder="+201#########"
                 value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)}
             />
           </div>
@@ -125,7 +125,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
             </label>
             <input 
                 className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                id="wheelChairId" type="text" placeholder="2126"
+                id="wheelChairId" type="text" placeholder="Get ID from wheelchair QR code"
                 value={wheelChairId} onChange={(e) => setWheelChairId(e.target.value)}
             />
           </div>
