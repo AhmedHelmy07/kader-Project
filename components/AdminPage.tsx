@@ -581,6 +581,8 @@ const AdminPage: React.FC = () => {
               startEdit={startEdit}
               setEditingProduct={setEditingProduct}
               removeProduct={removeProduct}
+              handleImageUpload={handleImageUpload}
+              uploadingImage={uploadingImage}
             />
           )}
           {activeTab === 'tickets' && <TicketsSection tickets={tickets} markProcessing={markProcessing} markClosed={markClosed} />}
@@ -786,7 +788,7 @@ const DashboardOverview: React.FC<{ stats: any; tickets: any[]; orders: any[] }>
 const ProductsSection: React.FC<any> = ({
   products, editingProduct, title, setTitle, price, setPrice, stock, setStock,
   image, setImage, description, setDescription, submitAdd, submitEdit, adding,
-  startEdit, setEditingProduct, removeProduct
+  startEdit, setEditingProduct, removeProduct, handleImageUpload, uploadingImage
 }) => {
   return (
     <div className="space-y-6">
