@@ -16,22 +16,44 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
   const [emergencyContact, setEmergencyContact] = useState('');
   const [wheelChairId, setWheelChairId] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
+
+    // Validation
+    if (!firstName.trim() || !lastName.trim()) {
+      setError("First and Last name are required");
+      setIsLoading(false);
+      return;
+    }
     if (!/^[^@\s]+@(gmail\.com|outlook\.com)$/.test(email)) {
       setError("Email must be @gmail.com or @outlook.com");
+      setIsLoading(false);
       return;
     }
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
+      setIsLoading(false);
       return;
     }
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
+      setIsLoading(false);
+      return;
+    }
+
     try {
+      console.log('Creating Firebase user with email:', email);
       const userCredential = await auth.createUserWithEmailAndPassword(email, password);
       const uid = userCredential.user?.uid;
+      
       if (uid) {
+        console.log('Firebase user created with UID:', uid);
+        console.log('Creating user record in Firestore...');
+        
         await createUserRecord(uid, {
           email,
           firstName,
@@ -40,10 +62,17 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
           wheelChairId: wheelChairId || undefined,
           authProviders: ['email'],
         });
+        
+        console.log('User record created successfully');
+        showWelcome();
+      } else {
+        throw new Error('Failed to create user: No UID returned');
       }
-      showWelcome();
     } catch (err: any) {
-      setError(err.message);
+      console.error('Registration error:', err);
+      const errorMessage = err.message || 'Registration failed. Please try again.';
+      setError(errorMessage);
+      setIsLoading(false);
     }
   };
 
@@ -86,6 +115,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
                   className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
                   id="firstName" type="text" placeholder="First Name"
                   value={firstName} onChange={(e) => setFirstName(e.target.value)}
+                  required
               />
             </div>
             <div>
@@ -96,6 +126,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
                   className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
                   id="lastName" type="text" placeholder="Last Name"
                   value={lastName} onChange={(e) => setLastName(e.target.value)}
+                  required
               />
             </div>
           </div>
@@ -157,10 +188,10 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
         title="Password must be at least 8 characters and contain letters and numbers."
       />
           </div>
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg" type="submit">
-            Register
+          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed" type="submit" disabled={isLoading}>
+            {isLoading ? 'Creating account...' : 'Register'}
           </button>
-          <button type="button" onClick={() => navigate('#/')} className="w-full mt-2 bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg">
+          <button type="button" onClick={() => navigate('#/')} className="w-full mt-2 bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg disabled:opacity-50" disabled={isLoading}>
             Cancel
           </button>
         </form>
