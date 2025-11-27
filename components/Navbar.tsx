@@ -91,6 +91,8 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
                                     <NavLink path="#/dashboard" onClick={handleNav} icon={<DashboardIcon />}>Dashboard</NavLink>
                                     <NavLink path="#/store" onClick={handleNav} icon={<StoreIcon />}>Store</NavLink>
                                     <NavLink path="#/hub" onClick={handleNav} icon={<HubIcon />}>Kader Hub</NavLink>
+                                    <NavLink path="#/medical-records" onClick={handleNav} icon={<MedicalIcon />}>Medical Records</NavLink>
+                                    <NavLink path="#/sos" onClick={handleNav} icon={<SOSIcon />}>🚨 SOS</NavLink>
                                     <NavLink path="#/community" onClick={handleNav} icon={<CommunityIcon />}>Community</NavLink>
                                     <NavLink path="#/tickets" onClick={handleNav} icon={<SupportIcon />}>Support</NavLink>
                                     <NavLink path="#/contact" onClick={handleNav} icon={<ContactIcon />}>Contact</NavLink>
@@ -157,6 +159,8 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
                             <NavLink path="#/dashboard" onClick={handleNav} icon={<DashboardIcon />}>Dashboard</NavLink>
                             <NavLink path="#/store" onClick={handleNav} icon={<StoreIcon />}>Store</NavLink>
                             <NavLink path="#/hub" onClick={handleNav} icon={<HubIcon />}>Kader Hub</NavLink>
+                            <NavLink path="#/medical-records" onClick={handleNav} icon={<MedicalIcon />}>Medical Records</NavLink>
+                            <NavLink path="#/sos" onClick={handleNav} icon={<SOSIcon />}>🚨 SOS</NavLink>
                             <NavLink path="#/community" onClick={handleNav} icon={<CommunityIcon />}>Community</NavLink>
                             <NavLink path="#/tickets" onClick={handleNav} icon={<SupportIcon />}>Support</NavLink>
                             <NavLink path="#/contact" onClick={handleNav} icon={<ContactIcon />}>Contact</NavLink>
@@ -235,5 +239,17 @@ const HubIcon = () => (
 const LogoutIcon = () => (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+    </svg>
+);
+
+const MedicalIcon = () => (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+);
+
+const SOSIcon = () => (
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4v2m0 4v.01M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
     </svg>
 );

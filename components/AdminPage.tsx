@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { useToast } from './Toast';
-import { onProductsChanged, onTicketsChanged, updateTicketStatus, createOrUpdateProduct, deleteProduct, onOrdersChanged, updateOrderStatus, onContactMessagesChanged, onMessagesChanged, deleteCommunityMessage, deleteContactMessage, getAdminPassword, setAdminPassword, setUserAdmin, onCoursesChanged, onJobsChanged, createOrUpdateCourse, createOrUpdateJob, deleteCourse, deleteJob, Course, Job } from '../services/firestore';
+import { onProductsChanged, onTicketsChanged, updateTicketStatus, createOrUpdateProduct, deleteProduct, onOrdersChanged, updateOrderStatus, onContactMessagesChanged, onMessagesChanged, deleteCommunityMessage, deleteContactMessage, getAdminPassword, setAdminPassword, setUserAdmin, onCoursesChanged, onJobsChanged, createOrUpdateCourse, createOrUpdateJob, deleteCourse, deleteJob, Course, Job, onMedicalRecordsChanged, onSOSRecordsChanged, MedicalRecord, SOSRecord, updateSOSRecord, deleteMedicalRecord, deleteSOSRecord } from '../services/firestore';
 import { KaderLogo } from './icons/KaderLogo';
 import { uploadFile } from '../services/storage';
 
@@ -13,6 +13,8 @@ const AdminPage: React.FC = () => {
   const [communityMsgs, setCommunityMsgs] = useState<any[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
+  const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
+  const [sosRecords, setSOSRecords] = useState<SOSRecord[]>([]);
   const [adding, setAdding] = useState(false);
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState(0);
@@ -34,8 +36,10 @@ const AdminPage: React.FC = () => {
     const offCommunity = onMessagesChanged(items => setCommunityMsgs(items));
     const offCourses = onCoursesChanged(items => setCourses(items));
     const offJobs = onJobsChanged(items => setJobs(items));
+    const offMedical = onMedicalRecordsChanged('', (items) => setMedicalRecords(items));
+    const offSOS = onSOSRecordsChanged('', (items) => setSOSRecords(items));
     return () => {
-      offTickets(); offProducts(); offOrders(); offContact(); offCommunity(); offCourses(); offJobs();
+      offTickets(); offProducts(); offOrders(); offContact(); offCommunity(); offCourses(); offJobs(); offMedical?.(); offSOS?.();
     };
   }, []);
 
@@ -99,7 +103,7 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  const [activeTab, setActiveTab] = useState<'dashboard'|'products'|'tickets'|'orders'|'contact'|'community'|'courses'|'jobs'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard'|'products'|'tickets'|'orders'|'contact'|'community'|'courses'|'jobs'|'medical'|'sos'>('dashboard');
   const [unlocked, setUnlocked] = useState<boolean>(() => !!sessionStorage.getItem('admin_unlocked'));
   const [passwordInput, setPasswordInput] = useState('');
 
@@ -358,6 +362,8 @@ const AdminPage: React.FC = () => {
                 { id: 'products', label: 'Products', icon: '🛍️', count: products.length },
                 { id: 'courses', label: 'Courses', icon: '📚', count: courses.length },
                 { id: 'jobs', label: 'Jobs', icon: '💼', count: jobs.length },
+                { id: 'medical', label: 'Medical Records', icon: '🏥', count: medicalRecords.length },
+                { id: 'sos', label: 'SOS Alerts', icon: '🚨', count: sosRecords.filter(r => r.status === 'Pending').length },
                 { id: 'tickets', label: 'Tickets', icon: '🎫', count: tickets.length },
                 { id: 'orders', label: 'Orders', icon: '📦', count: orders.length },
                 { id: 'contact', label: 'Contact', icon: '✉️', count: contactMsgs.length },
@@ -432,6 +438,45 @@ const AdminPage: React.FC = () => {
               setEditingJob={setEditingJob}
               removeJob={removeJob}
               toast={toast}
+            />
+          )}
+          {activeTab === 'medical' && (
+            <MedicalRecordsAdminSection
+              records={medicalRecords}
+              toast={toast}
+              onDelete={async (id) => {
+                try {
+                  await deleteMedicalRecord(id);
+                  toast?.push('Medical record deleted');
+                } catch (err) {
+                  console.error('Delete failed', err);
+                  toast?.push('Failed to delete record');
+                }
+              }}
+            />
+          )}
+          {activeTab === 'sos' && (
+            <SOSRecordsAdminSection
+              records={sosRecords}
+              toast={toast}
+              onUpdate={async (id, status) => {
+                try {
+                  await updateSOSRecord(id, { status });
+                  toast?.push('SOS status updated');
+                } catch (err) {
+                  console.error('Update failed', err);
+                  toast?.push('Failed to update SOS');
+                }
+              }}
+              onDelete={async (id) => {
+                try {
+                  await deleteSOSRecord(id);
+                  toast?.push('SOS record deleted');
+                } catch (err) {
+                  console.error('Delete failed', err);
+                  toast?.push('Failed to delete SOS');
+                }
+              }}
             />
           )}
         </div>
@@ -1110,6 +1155,328 @@ const JobsSection: React.FC<{ jobs: Job[]; editingJob: Job | null; setEditingJob
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+};
+
+// Medical Records Admin Section
+interface MedicalRecordsAdminSectionProps {
+  records: MedicalRecord[];
+  toast: any;
+  onDelete: (id: string) => Promise<void>;
+}
+
+const MedicalRecordsAdminSection: React.FC<MedicalRecordsAdminSectionProps> = ({
+  records,
+  toast,
+  onDelete,
+}) => {
+  const [filter, setFilter] = useState<string>('All');
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'Critical':
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
+      case 'High':
+        return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
+      case 'Medium':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'Low':
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
+      default:
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    }
+  };
+
+  const filteredRecords =
+    filter === 'All' ? records : records.filter((r) => r.severity === filter);
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6">
+        <h3 className="text-2xl font-bold text-white mb-4">Medical Records Overview</h3>
+
+        <div className="grid md:grid-cols-4 gap-4 mb-6">
+          <StatCard
+            icon={<span className="text-3xl">📊</span>}
+            title="Total Records"
+            value={records.length}
+            color="blue"
+          />
+          <StatCard
+            icon={<span className="text-3xl">🔴</span>}
+            title="Critical"
+            value={records.filter((r) => r.severity === 'Critical').length}
+            color="red"
+          />
+          <StatCard
+            icon={<span className="text-3xl">🟠</span>}
+            title="High"
+            value={records.filter((r) => r.severity === 'High').length}
+            color="orange"
+          />
+          <StatCard
+            icon={<span className="text-3xl">📋</span>}
+            title="Users"
+            value={new Set(records.map((r) => r.uid)).size}
+            color="purple"
+          />
+        </div>
+
+        <div className="flex gap-2 mb-6">
+          {['All', 'Low', 'Medium', 'High', 'Critical'].map((severity) => (
+            <button
+              key={severity}
+              onClick={() => setFilter(severity)}
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                filter === severity
+                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg'
+                  : 'bg-white/10 text-gray-300 hover:bg-white/20'
+              }`}
+            >
+              {severity}
+            </button>
+          ))}
+        </div>
+
+        {filteredRecords.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-gray-400 text-lg">No medical records found</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="text-left py-3 px-4 text-gray-300 font-semibold">User Email</th>
+                  <th className="text-left py-3 px-4 text-gray-300 font-semibold">Title</th>
+                  <th className="text-left py-3 px-4 text-gray-300 font-semibold">Medical Case</th>
+                  <th className="text-left py-3 px-4 text-gray-300 font-semibold">Severity</th>
+                  <th className="text-left py-3 px-4 text-gray-300 font-semibold">Date</th>
+                  <th className="text-center py-3 px-4 text-gray-300 font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRecords.map((record) => (
+                  <tr
+                    key={record.id}
+                    className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200"
+                  >
+                    <td className="py-3 px-4 text-gray-300">{record.userEmail}</td>
+                    <td className="py-3 px-4 text-white font-medium truncate">{record.title}</td>
+                    <td className="py-3 px-4 text-gray-400">{record.medicalCase}</td>
+                    <td className="py-3 px-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold border ${getSeverityColor(
+                          record.severity
+                        )}`}
+                      >
+                        {record.severity}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-gray-400">
+                      {record.createdAt
+                        ? new Date(
+                            (record.createdAt as any).toDate?.() || record.createdAt
+                          ).toLocaleDateString()
+                        : 'N/A'}
+                    </td>
+                    <td className="py-3 px-4 text-center">
+                      <button
+                        onClick={() => {
+                          if (confirm(`Delete "${record.title}"?`)) {
+                            onDelete(record.id || '');
+                          }
+                        }}
+                        className="px-3 py-1 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded-lg text-xs font-medium transition-all duration-300"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// SOS Records Admin Section
+interface SOSRecordsAdminSectionProps {
+  records: SOSRecord[];
+  toast: any;
+  onUpdate: (id: string, status: 'Pending' | 'Responded' | 'Resolved') => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
+}
+
+const SOSRecordsAdminSection: React.FC<SOSRecordsAdminSectionProps> = ({
+  records,
+  toast,
+  onUpdate,
+  onDelete,
+}) => {
+  const [filter, setFilter] = useState<string>('All');
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case 'Critical':
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
+      case 'High':
+        return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
+      case 'Medium':
+        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+      case 'Low':
+        return 'bg-green-500/20 text-green-400 border-green-500/30';
+      default:
+        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Pending':
+        return 'bg-red-500';
+      case 'Responded':
+        return 'bg-blue-500';
+      case 'Resolved':
+        return 'bg-green-500';
+      default:
+        return 'bg-gray-500';
+    }
+  };
+
+  const filteredRecords = filter === 'All' ? records : records.filter((r) => r.status === filter);
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white/10 backdrop-blur-lg rounded-2xl border border-white/20 p-6">
+        <h3 className="text-2xl font-bold text-white mb-4">🚨 SOS Emergency Alerts</h3>
+
+        <div className="grid md:grid-cols-4 gap-4 mb-6">
+          <StatCard
+            icon={<span className="text-3xl">📊</span>}
+            title="Total Alerts"
+            value={records.length}
+            color="blue"
+          />
+          <StatCard
+            icon={<span className="text-3xl">🚨</span>}
+            title="Pending"
+            value={records.filter((r) => r.status === 'Pending').length}
+            color="red"
+          />
+          <StatCard
+            icon={<span className="text-3xl">✓</span>}
+            title="Responded"
+            value={records.filter((r) => r.status === 'Responded').length}
+            color="blue"
+          />
+          <StatCard
+            icon={<span className="text-3xl">✓✓</span>}
+            title="Resolved"
+            value={records.filter((r) => r.status === 'Resolved').length}
+            color="green"
+          />
+        </div>
+
+        <div className="flex gap-2 mb-6">
+          {['All', 'Pending', 'Responded', 'Resolved'].map((status) => (
+            <button
+              key={status}
+              onClick={() => setFilter(status)}
+              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                filter === status
+                  ? 'bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg'
+                  : 'bg-white/10 text-gray-300 hover:bg-white/20'
+              }`}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
+
+        {filteredRecords.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-gray-400 text-lg">No SOS alerts found</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {filteredRecords.map((record) => (
+              <div
+                key={record.id}
+                className={`rounded-xl p-4 border-l-4 ${
+                  record.status === 'Pending'
+                    ? 'bg-red-500/10 border-l-red-500'
+                    : record.status === 'Responded'
+                      ? 'bg-blue-500/10 border-l-blue-500'
+                      : 'bg-green-500/10 border-l-green-500'
+                } hover:shadow-lg transition-all duration-300`}
+              >
+                <div className="flex justify-between items-start mb-2">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold text-white ${getStatusColor(
+                          record.status
+                        )}`}
+                      >
+                        {record.status === 'Pending' && '🚨'} {record.status}
+                      </span>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-bold border ${getPriorityColor(
+                          record.priority
+                        )}`}
+                      >
+                        {record.priority}
+                      </span>
+                    </div>
+                    <p className="text-white mb-2">{record.message}</p>
+                    <p className="text-sm text-gray-400">
+                      User: {record.userEmail} •{' '}
+                      {record.createdAt
+                        ? new Date(
+                            (record.createdAt as any).toDate?.() || record.createdAt
+                          ).toLocaleString()
+                        : 'N/A'}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    {record.status === 'Pending' && (
+                      <button
+                        onClick={() => record.id && onUpdate(record.id, 'Responded')}
+                        className="px-3 py-1 bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 rounded-lg text-xs font-medium transition-all duration-300"
+                      >
+                        Respond
+                      </button>
+                    )}
+                    {record.status !== 'Resolved' && (
+                      <button
+                        onClick={() => record.id && onUpdate(record.id, 'Resolved')}
+                        className="px-3 py-1 bg-green-500/20 text-green-400 hover:bg-green-500/30 rounded-lg text-xs font-medium transition-all duration-300"
+                      >
+                        Resolve
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        if (confirm('Delete this SOS record?')) {
+                          onDelete(record.id || '');
+                        }
+                      }}
+                      className="px-3 py-1 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded-lg text-xs font-medium transition-all duration-300"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -11,6 +11,8 @@ const usersCol = firestore.collection('users');
 const cartsCol = firestore.collection('carts');
 const coursesCol = firestore.collection('courses');
 const jobsCol = firestore.collection('jobs');
+const medicalRecordsCol = firestore.collection('medical_records');
+const sosRecordsCol = firestore.collection('sos_records');
 
 export type Product = {
   id?: string;
@@ -75,6 +77,33 @@ export type Job = {
   posted?: string;
   category: string;
   createdAt?: firebase.firestore.FieldValue;
+};
+
+export type MedicalRecord = {
+  id?: string;
+  uid: string;
+  userEmail: string;
+  title: string;
+  description: string;
+  medicalCase: string;
+  severity: 'Low' | 'Medium' | 'High' | 'Critical';
+  recordDate?: firebase.firestore.FieldValue;
+  createdAt?: firebase.firestore.FieldValue;
+  updatedAt?: firebase.firestore.FieldValue;
+};
+
+export type SOSRecord = {
+  id?: string;
+  uid: string;
+  userEmail: string;
+  message: string;
+  location?: { x: number; y: number };
+  status: 'Pending' | 'Responded' | 'Resolved';
+  priority: 'Low' | 'Medium' | 'High' | 'Critical';
+  respondedBy?: string;
+  resolvedAt?: firebase.firestore.FieldValue;
+  createdAt?: firebase.firestore.FieldValue;
+  updatedAt?: firebase.firestore.FieldValue;
 };
 
 // Products
@@ -322,6 +351,77 @@ export const onJobsChanged = (cb: (jobs: Job[]) => void) => {
   });
 };
 
+// Medical Records
+export const createMedicalRecord = async (record: MedicalRecord) => {
+  const data = {
+    ...record,
+    recordDate: firebase.firestore.FieldValue.serverTimestamp(),
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  } as any;
+  const ref = await medicalRecordsCol.add(data);
+  return ref.id;
+};
+
+export const getMedicalRecordsByUser = async (uid: string): Promise<MedicalRecord[]> => {
+  const snap = await medicalRecordsCol.where('uid', '==', uid).orderBy('createdAt', 'desc').get();
+  return snap.docs.map(d => ({ id: d.id, ...(d.data() as MedicalRecord) }));
+};
+
+export const onMedicalRecordsChanged = (cb: (records: MedicalRecord[]) => void) => {
+  return medicalRecordsCol.orderBy('createdAt', 'desc').limit(100).onSnapshot(snap => {
+    const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as MedicalRecord) }));
+    cb(items);
+  });
+};
+
+export const deleteMedicalRecord = async (id: string) => {
+  await medicalRecordsCol.doc(id).delete();
+};
+
+export const updateMedicalRecord = async (id: string, data: Partial<MedicalRecord>) => {
+  await medicalRecordsCol.doc(id).update({
+    ...data,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  });
+};
+
+// SOS Records
+export const createSOSRecord = async (record: SOSRecord) => {
+  const data = {
+    ...record,
+    status: 'Pending',
+    priority: record.priority || 'High',
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  } as any;
+  const ref = await sosRecordsCol.add(data);
+  return ref.id;
+};
+
+export const getSOSRecordsByUser = async (uid: string): Promise<SOSRecord[]> => {
+  const snap = await sosRecordsCol.where('uid', '==', uid).orderBy('createdAt', 'desc').get();
+  return snap.docs.map(d => ({ id: d.id, ...(d.data() as SOSRecord) }));
+};
+
+export const onSOSRecordsChanged = (cb: (records: SOSRecord[]) => void) => {
+  return sosRecordsCol.orderBy('createdAt', 'desc').limit(100).onSnapshot(snap => {
+    const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as SOSRecord) }));
+    cb(items);
+  });
+};
+
+export const updateSOSRecord = async (id: string, data: Partial<SOSRecord>) => {
+  await sosRecordsCol.doc(id).update({
+    ...data,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  });
+};
+
+export const deleteSOSRecord = async (id: string) => {
+  await sosRecordsCol.doc(id).delete();
+};
+
 // Users - Create user record on registration
 export type User = {
   uid?: string;
@@ -366,4 +466,14 @@ export default {
   deleteContactMessage,
   setAdminPassword,
   getAdminPassword,
+  createMedicalRecord,
+  getMedicalRecordsByUser,
+  onMedicalRecordsChanged,
+  deleteMedicalRecord,
+  updateMedicalRecord,
+  createSOSRecord,
+  getSOSRecordsByUser,
+  onSOSRecordsChanged,
+  updateSOSRecord,
+  deleteSOSRecord,
 };
