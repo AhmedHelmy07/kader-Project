@@ -19,9 +19,11 @@ export type Product = {
   title: string;
   description?: string;
   price: number;
-  image?: string; // storage url or path
+  image?: string; // storage url
+  base64Image?: string; // base64 encoded image data
   stock?: number;
   createdAt?: firebase.firestore.FieldValue;
+  updatedAt?: firebase.firestore.FieldValue;
 };
 
 export type Ticket = {
@@ -119,11 +121,20 @@ export const getProduct = async (id: string): Promise<Product | null> => {
 };
 
 export const createOrUpdateProduct = async (product: Product) => {
-  const data = { ...product, createdAt: firebase.firestore.FieldValue.serverTimestamp() } as any;
   if (product.id) {
-    await productsCol.doc(product.id).set(data, { merge: true });
+    const { id, ...dataWithoutId } = product;
+    await productsCol.doc(product.id).set({
+      ...dataWithoutId,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
     return product.id;
   }
+  const { id, ...dataWithoutId } = product;
+  const data = { 
+    ...dataWithoutId, 
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  } as any;
   const ref = await productsCol.add(data);
   return ref.id;
 };

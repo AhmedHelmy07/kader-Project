@@ -2,13 +2,16 @@ import React from 'react';
 import type { Product } from '../services/firestore';
 
 const ProductCard: React.FC<{ product: Product; onAdd?: (p: Product) => void }> = ({ product, onAdd }) => {
+  // Use base64Image if available, otherwise use image URL, otherwise use placeholder
+  const imageSource = product.base64Image || product.image || '/images/7.jpg';
+  
   return (
     <div className="group relative bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-sm border border-gray-700 rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl hover:border-blue-500 transition-all duration-500 flex flex-col hover:scale-105 transform">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-600/0 to-blue-600/0 group-hover:from-blue-600/10 group-hover:to-purple-600/10 transition-all duration-500 pointer-events-none"></div>
       <div className="relative h-64 w-full bg-gray-900/50 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10"></div>
         <img
-          src={product.image || '/images/7.jpg'}
+          src={imageSource}
           alt={product.title}
           className="max-h-full w-full object-cover object-center transform group-hover:scale-110 transition-transform duration-700"
         />

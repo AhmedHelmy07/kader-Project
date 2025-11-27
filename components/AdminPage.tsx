@@ -83,7 +83,7 @@ const AdminPage: React.FC = () => {
 
   const startEdit = (p: any) => {
     setEditingProduct(p);
-    setTitle(p.title || ''); setDescription(p.description || ''); setPrice(p.price || 0); setStock(p.stock || 0); setImage(p.image || '');
+    setTitle(p.title || ''); setDescription(p.description || ''); setPrice(p.price || 0); setStock(p.stock || 0); setImage(p.base64Image || p.image || '');
   };
 
   const submitEdit = async (e: React.FormEvent) => {
@@ -158,21 +158,26 @@ const AdminPage: React.FC = () => {
     if (!file) return;
     
     setUploadingImage(true);
-    setUploadProgress(0);
     
     try {
-      const timestamp = Date.now();
-      const path = `products/${timestamp}_${file.name}`;
-      const url = await uploadFile(path, file, (pct) => setUploadProgress(Math.round(pct)));
-      setImage(url);
-      toast?.push('Image uploaded successfully');
+      // Convert image to base64
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        setImage(base64String);
+        toast?.push('Image loaded successfully');
+      };
+      reader.onerror = () => {
+        console.error('File read failed');
+        toast?.push('Failed to read image file');
+      };
+      reader.readAsDataURL(file);
       e.target.value = ''; // reset input
     } catch (err) {
-      console.error('Image upload failed:', err);
-      toast?.push('Failed to upload image');
+      console.error('Image loading failed:', err);
+      toast?.push('Failed to load image');
     } finally {
       setUploadingImage(false);
-      setUploadProgress(0);
     }
   };
 
@@ -822,7 +827,7 @@ const ProductsSection: React.FC<any> = ({
           {/* Image Upload Section */}
           <div className="space-y-3">
             <div>
-              <label className="block text-sm text-gray-300 font-medium mb-2">Product Image</label>
+              <label className="block text-sm text-gray-300 font-medium mb-2">Product Image (Local File)</label>
               <div className="flex gap-2">
                 <label className="flex-1 flex items-center justify-center px-4 py-3 bg-white/5 border-2 border-dashed border-blue-500/30 rounded-xl cursor-pointer hover:bg-white/10 hover:border-blue-500/50 transition-all duration-300 text-blue-300 font-medium">
                   <input
@@ -832,23 +837,27 @@ const ProductsSection: React.FC<any> = ({
                     disabled={uploadingImage}
                     className="hidden"
                   />
-                  <span>{uploadingImage ? `Uploading ${uploadProgress}%...` : 'Click to Upload'}</span>
+                  <span>{uploadingImage ? 'Loading image...' : 'Click to Upload Image'}</span>
                 </label>
               </div>
-              {uploadProgress > 0 && uploadProgress < 100 && (
-                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden mt-2">
-                  <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-600 transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
+              {image && image.startsWith('data:image') && (
+                <div className="mt-3">
+                  <p className="text-xs text-green-400 mb-2">✅ Image loaded (stored in base64)</p>
+                  <img src={image} alt="Preview" className="w-full h-32 object-cover rounded-lg" />
                 </div>
               )}
             </div>
             <div>
-              <label className="block text-sm text-gray-300 font-medium mb-2">Or enter Image URL</label>
+              <label className="block text-sm text-gray-300 font-medium mb-2">Or enter Image URL (Optional)</label>
               <input
-                value={image}
+                value={image.startsWith('data:image') ? '' : image}
                 onChange={e => setImage(e.target.value)}
                 placeholder="https://example.com/image.jpg"
                 className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
               />
+              {image && !image.startsWith('data:image') && image.length > 0 && (
+                <p className="text-xs text-gray-400 mt-1">URL will be used as fallback if base64 not available</p>
+              )}
             </div>
           </div>
           <textarea
@@ -886,9 +895,9 @@ const ProductsSection: React.FC<any> = ({
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {products.map((p, idx) => (
           <div key={p.id} className="bg-white/10 backdrop-blur-lg rounded-xl shadow-xl border border-white/20 overflow-hidden hover:shadow-2xl hover:scale-105 transition-all duration-300 animate-fade-in" style={{ animationDelay: `${idx * 50}ms` }}>
-            {p.image && (
+            {(p.base64Image || p.image) && (
               <div className="h-48 overflow-hidden">
-                <img src={p.image} alt={p.title} className="w-full h-full object-cover" />
+                <img src={p.base64Image || p.image} alt={p.title} className="w-full h-full object-cover" />
               </div>
             )}
             <div className="p-4">
