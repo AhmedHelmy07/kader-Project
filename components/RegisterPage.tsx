@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { KaderLogo } from './icons/KaderLogo';
 import { auth } from '../firebase';
+import { createUserRecord } from '../services/firestore';
 
 interface RegisterPageProps {
   navigate: (path: string) => void;
@@ -10,6 +11,10 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [emergencyContact, setEmergencyContact] = useState('');
+  const [wheelChairId, setWheelChairId] = useState('');
   const [error, setError] = useState('');
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -24,7 +29,18 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
       return;
     }
     try {
-      await auth.createUserWithEmailAndPassword(email, password);
+      const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+      const uid = userCredential.user?.uid;
+      if (uid) {
+        await createUserRecord(uid, {
+          email,
+          firstName,
+          lastName,
+          emergencyContact: emergencyContact || undefined,
+          wheelChairId: wheelChairId || undefined,
+          authProviders: ['email'],
+        });
+      }
       showWelcome();
     } catch (err: any) {
       setError(err.message);
@@ -36,7 +52,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
     setWelcome(true);
     setTimeout(() => {
       setWelcome(false);
-      navigate('#/');
+      navigate('#/dashboard');
     }, 1400);
   };
 
@@ -61,6 +77,28 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
       <div className="w-full max-w-md bg-gray-800/90 rounded-2xl shadow-2xl p-8 border border-blue-900">
         <form onSubmit={handleRegister}>
           {error && <p className="bg-red-500/20 text-red-400 p-3 rounded-md mb-4 text-sm">{error}</p>}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div>
+              <label className="block text-blue-300 text-sm font-bold mb-2" htmlFor="firstName">
+                First Name
+              </label>
+              <input 
+                  className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                  id="firstName" type="text" placeholder="John"
+                  value={firstName} onChange={(e) => setFirstName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-blue-300 text-sm font-bold mb-2" htmlFor="lastName">
+                Last Name
+              </label>
+              <input 
+                  className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                  id="lastName" type="text" placeholder="Doe"
+                  value={lastName} onChange={(e) => setLastName(e.target.value)}
+              />
+            </div>
+          </div>
           <div className="mb-4">
             <label className="block text-blue-300 text-sm font-bold mb-2" htmlFor="email">
               Email
@@ -69,6 +107,26 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
                 className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
                 id="email" type="email" placeholder="you@example.com"
                 value={email} onChange={(e) => setEmail(e.target.value)} required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-blue-300 text-sm font-bold mb-2" htmlFor="emergencyContact">
+              Emergency Contact (optional)
+            </label>
+            <input 
+                className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                id="emergencyContact" type="tel" placeholder="+201234567890"
+                value={emergencyContact} onChange={(e) => setEmergencyContact(e.target.value)}
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-blue-300 text-sm font-bold mb-2" htmlFor="wheelChairId">
+              Wheelchair ID (optional)
+            </label>
+            <input 
+                className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                id="wheelChairId" type="text" placeholder="2126"
+                value={wheelChairId} onChange={(e) => setWheelChairId(e.target.value)}
             />
           </div>
           <div className="mb-4">

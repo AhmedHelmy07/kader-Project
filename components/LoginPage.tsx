@@ -37,7 +37,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
     setWelcome(true);
     setTimeout(() => {
       setWelcome(false);
-      navigate('#/');
+      navigate('#/dashboard');
     }, 1400);
   };
 

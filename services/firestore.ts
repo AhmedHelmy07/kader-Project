@@ -322,6 +322,29 @@ export const onJobsChanged = (cb: (jobs: Job[]) => void) => {
   });
 };
 
+// Users - Create user record on registration
+export type User = {
+  uid?: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  emergencyContact?: string;
+  wheelChairId?: string;
+  authProviders?: string[];
+  createdAt?: firebase.firestore.FieldValue;
+  updatedAt?: firebase.firestore.FieldValue;
+};
+
+export const createUserRecord = async (uid: string, userData: User) => {
+  const data = {
+    ...userData,
+    authProviders: userData.authProviders || ['email'],
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  } as any;
+  await usersCol.doc(uid).set(data, { merge: true });
+};
+
 export default {
   listProducts,
   getProduct,
