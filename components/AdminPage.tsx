@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import { useToast } from './Toast';
-import { onProductsChanged, onTicketsChanged, updateTicketStatus, createOrUpdateProduct, deleteProduct, onOrdersChanged, updateOrderStatus, onContactMessagesChanged, onMessagesChanged, deleteCommunityMessage, deleteContactMessage, getAdminPassword, setAdminPassword, setUserAdmin, onCoursesChanged, onJobsChanged, createOrUpdateCourse, createOrUpdateJob, deleteCourse, deleteJob, Course, Job, onMedicalRecordsChanged, onSOSRecordsChanged, MedicalRecord, SOSRecord, updateSOSRecord, deleteMedicalRecord, deleteSOSRecord } from '../services/firestore';
+import { onProductsChanged, onTicketsChanged, updateTicketStatus, createOrUpdateProduct, deleteProduct, onOrdersChanged, updateOrderStatus, onContactMessagesChanged, onMessagesChanged, deleteCommunityMessage, deleteContactMessage, getAdminPassword, setAdminPassword, setUserAdmin, onCoursesChanged, onJobsChanged, createOrUpdateCourse, createOrUpdateJob, deleteCourse, deleteJob, Course, Job, onMedicalRecordsChanged, onSOSRecordsChanged, onAllMedicalRecordsChanged, onAllSOSRecordsChanged, MedicalRecord, SOSRecord, updateSOSRecord, deleteMedicalRecord, deleteSOSRecord } from '../services/firestore';
 import { KaderLogo } from './icons/KaderLogo';
 import { uploadFile } from '../services/storage';
 
@@ -36,8 +36,8 @@ const AdminPage: React.FC = () => {
     const offCommunity = onMessagesChanged(items => setCommunityMsgs(items));
     const offCourses = onCoursesChanged(items => setCourses(items));
     const offJobs = onJobsChanged(items => setJobs(items));
-    const offMedical = onMedicalRecordsChanged('', (items) => setMedicalRecords(items));
-    const offSOS = onSOSRecordsChanged('', (items) => setSOSRecords(items));
+    const offMedical = onAllMedicalRecordsChanged((items) => setMedicalRecords(items));
+    const offSOS = onAllSOSRecordsChanged((items) => setSOSRecords(items));
     return () => {
       offTickets(); offProducts(); offOrders(); offContact(); offCommunity(); offCourses(); offJobs(); offMedical?.(); offSOS?.();
     };

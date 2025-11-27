@@ -368,8 +368,16 @@ export const getMedicalRecordsByUser = async (uid: string): Promise<MedicalRecor
   return snap.docs.map(d => ({ id: d.id, ...(d.data() as MedicalRecord) }));
 };
 
-export const onMedicalRecordsChanged = (cb: (records: MedicalRecord[]) => void) => {
-  return medicalRecordsCol.orderBy('createdAt', 'desc').limit(100).onSnapshot(snap => {
+export const onMedicalRecordsChanged = (uid: string, cb: (records: MedicalRecord[]) => void) => {
+  return medicalRecordsCol.where('uid', '==', uid).orderBy('createdAt', 'desc').onSnapshot(snap => {
+    const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as MedicalRecord) }));
+    cb(items);
+  });
+};
+
+// For admin: get all medical records
+export const onAllMedicalRecordsChanged = (cb: (records: MedicalRecord[]) => void) => {
+  return medicalRecordsCol.orderBy('createdAt', 'desc').limit(500).onSnapshot(snap => {
     const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as MedicalRecord) }));
     cb(items);
   });
@@ -404,8 +412,16 @@ export const getSOSRecordsByUser = async (uid: string): Promise<SOSRecord[]> => 
   return snap.docs.map(d => ({ id: d.id, ...(d.data() as SOSRecord) }));
 };
 
-export const onSOSRecordsChanged = (cb: (records: SOSRecord[]) => void) => {
-  return sosRecordsCol.orderBy('createdAt', 'desc').limit(100).onSnapshot(snap => {
+export const onSOSRecordsChanged = (uid: string, cb: (records: SOSRecord[]) => void) => {
+  return sosRecordsCol.where('uid', '==', uid).orderBy('createdAt', 'desc').onSnapshot(snap => {
+    const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as SOSRecord) }));
+    cb(items);
+  });
+};
+
+// For admin: get all SOS records
+export const onAllSOSRecordsChanged = (cb: (records: SOSRecord[]) => void) => {
+  return sosRecordsCol.orderBy('createdAt', 'desc').limit(500).onSnapshot(snap => {
     const items = snap.docs.map(d => ({ id: d.id, ...(d.data() as SOSRecord) }));
     cb(items);
   });
@@ -469,11 +485,13 @@ export default {
   createMedicalRecord,
   getMedicalRecordsByUser,
   onMedicalRecordsChanged,
+  onAllMedicalRecordsChanged,
   deleteMedicalRecord,
   updateMedicalRecord,
   createSOSRecord,
   getSOSRecordsByUser,
   onSOSRecordsChanged,
+  onAllSOSRecordsChanged,
   updateSOSRecord,
   deleteSOSRecord,
 };
