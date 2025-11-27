@@ -160,16 +160,48 @@ const AdminPage: React.FC = () => {
     setUploadingImage(true);
     
     try {
-      // Convert image to base64
+      // Create image element to compress
       const reader = new FileReader();
-      reader.onload = () => {
-        const base64String = reader.result as string;
-        setImage(base64String);
-        toast?.push('Image loaded successfully');
-      };
-      reader.onerror = () => {
-        console.error('File read failed');
-        toast?.push('Failed to read image file');
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          // Create canvas and compress image
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            toast?.push('Failed to compress image');
+            setUploadingImage(false);
+            return;
+          }
+          
+          // Scale down image to max 800x600
+          let width = img.width;
+          let height = img.height;
+          const maxWidth = 800;
+          const maxHeight = 600;
+          
+          if (width > height) {
+            if (width > maxWidth) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Convert to compressed base64 (quality 0.7)
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          setImage(compressedBase64);
+          toast?.push('Image compressed and loaded successfully');
+        };
+        img.src = event.target?.result as string;
       };
       reader.readAsDataURL(file);
       e.target.value = ''; // reset input
