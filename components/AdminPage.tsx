@@ -3,6 +3,7 @@ import { useAuth } from '../auth/AuthContext';
 import { useToast } from './Toast';
 import { onProductsChanged, onTicketsChanged, updateTicketStatus, createOrUpdateProduct, deleteProduct, onOrdersChanged, updateOrderStatus, onContactMessagesChanged, onMessagesChanged, deleteCommunityMessage, deleteContactMessage, getAdminPassword, setAdminPassword, setUserAdmin, onCoursesChanged, onJobsChanged, createOrUpdateCourse, createOrUpdateJob, deleteCourse, deleteJob, Course, Job } from '../services/firestore';
 import { KaderLogo } from './icons/KaderLogo';
+import { uploadFile } from '../services/storage';
 
 const AdminPage: React.FC = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -21,6 +22,9 @@ const AdminPage: React.FC = () => {
   const [editingProduct, setEditingProduct] = useState<any | null>(null);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [confirmDelete, setConfirmDelete] = useState<{ type: string; id: string; name: string } | null>(null);
 
   useEffect(() => {
     const offTickets = onTicketsChanged(items => setTickets(items));
@@ -46,21 +50,16 @@ const AdminPage: React.FC = () => {
   };
 
   const removeProduct = async (id: string) => {
-    if (!window.confirm('Delete this product?')) return;
-    await deleteProduct(id);
-    toast?.push('Product deleted');
+    const product = products.find(p => p.id === id);
+    handleDeleteWithConfirm('product', id, product?.title || 'Product');
   };
 
   const removeCommunity = async (id: string) => {
-    if (!window.confirm('Delete this community message?')) return;
-    await deleteCommunityMessage(id);
-    toast?.push('Community message deleted');
+    handleDeleteWithConfirm('community', id, 'Community message');
   };
 
   const removeContact = async (id: string) => {
-    if (!window.confirm('Delete this contact message?')) return;
-    await deleteContactMessage(id);
-    toast?.push('Contact message deleted');
+    handleDeleteWithConfirm('contact', id, 'Contact message');
   };
 
   const submitAdd = async (e: React.FormEvent) => {
@@ -141,17 +140,76 @@ const AdminPage: React.FC = () => {
   };
 
   const removeCourse = async (id: string) => {
-    if (!window.confirm('Delete this course?')) return;
-    await deleteCourse(id);
-    toast?.push('Course deleted');
-    setEditingCourse(null);
+    const course = courses.find(c => c.id === id);
+    handleDeleteWithConfirm('course', id, course?.title || 'Course');
   };
 
   const removeJob = async (id: string) => {
-    if (!window.confirm('Delete this job?')) return;
-    await deleteJob(id);
-    toast?.push('Job deleted');
-    setEditingJob(null);
+    const job = jobs.find(j => j.id === id);
+    handleDeleteWithConfirm('job', id, job?.title || 'Job');
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setUploadingImage(true);
+    setUploadProgress(0);
+    
+    try {
+      const timestamp = Date.now();
+      const path = `products/${timestamp}_${file.name}`;
+      const url = await uploadFile(path, file, (pct) => setUploadProgress(Math.round(pct)));
+      setImage(url);
+      toast?.push('Image uploaded successfully');
+      e.target.value = ''; // reset input
+    } catch (err) {
+      console.error('Image upload failed:', err);
+      toast?.push('Failed to upload image');
+    } finally {
+      setUploadingImage(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const handleDeleteWithConfirm = (type: string, id: string, name: string) => {
+    setConfirmDelete({ type, id, name });
+  };
+
+  const confirmDeleteAction = async () => {
+    if (!confirmDelete) return;
+    
+    try {
+      switch (confirmDelete.type) {
+        case 'product':
+          await deleteProduct(confirmDelete.id);
+          toast?.push('Product deleted successfully');
+          break;
+        case 'course':
+          await deleteCourse(confirmDelete.id);
+          toast?.push('Course deleted successfully');
+          setEditingCourse(null);
+          break;
+        case 'job':
+          await deleteJob(confirmDelete.id);
+          toast?.push('Job deleted successfully');
+          setEditingJob(null);
+          break;
+        case 'community':
+          await deleteCommunityMessage(confirmDelete.id);
+          toast?.push('Community message deleted successfully');
+          break;
+        case 'contact':
+          await deleteContactMessage(confirmDelete.id);
+          toast?.push('Contact message deleted successfully');
+          break;
+      }
+    } catch (err) {
+      console.error('Delete failed:', err);
+      toast?.push('Failed to delete item');
+    } finally {
+      setConfirmDelete(null);
+    }
   };
 
   const stats = {
