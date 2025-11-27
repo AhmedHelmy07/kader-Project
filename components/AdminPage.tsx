@@ -1223,6 +1223,14 @@ const JobsSection: React.FC<{ jobs: Job[]; editingJob: Job | null; setEditingJob
       setCompany(editingJob.company || '');
       setLocation(editingJob.location || '');
       setType(editingJob.type || 'Full-time');
+      setSalary(editingJob.salary || '');
+      setDescription(editingJob.description || '');
+      setRequirements(editingJob.requirements || '');
+      setCategory(editingJob.category || '');
+      setPosted(editingJob.posted || '');
+    }
+  }, [editingJob]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
