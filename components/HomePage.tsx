@@ -10,6 +10,7 @@ import img7 from '../images/7.jpg';
 import img8 from '../images/8.jpg';
 import { Footer } from './Footer';
 import { Navbar } from './Navbar';
+import { useAuth } from '../auth/AuthContext';
 
 interface HomePageProps {
   navigate: (path: string) => void;
@@ -29,6 +30,7 @@ const FeatureCard: React.FC<{ icon: string; title: string; children: React.React
 
 
 const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
+    const { user } = useAuth();
     const images = [img1, img2, img3, img4, img5, img7, img8];
     const [idx, setIdx] = useState(0);
     useEffect(() => {
@@ -72,12 +74,12 @@ const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                             </div>
                         </div>
                         <button
-                            onClick={() => navigate('#/register')}
+                            onClick={() => user ? navigate('#/dashboard') : navigate('#/register')}
                             className="group relative bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold py-4 px-10 rounded-xl text-lg transition-all duration-300 shadow-2xl shadow-blue-500/40 hover:shadow-blue-500/60 hover:scale-105 overflow-hidden animate-fade-in-delay-3"
                         >
                             <span className="absolute inset-0 w-0 bg-white/20 transition-all duration-300 group-hover:w-full"></span>
                             <span className="relative flex items-center gap-2">
-                                Get Started
+                                {user ? 'Go to Dashboard' : 'Get Started'}
                                 <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                                 </svg>
