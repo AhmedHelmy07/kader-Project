@@ -1256,14 +1256,6 @@ const JobsSection: React.FC<{ jobs: Job[]; editingJob: Job | null; setEditingJob
     } finally {
       setAdding(false);
     }
-  };  setEditingJob(null);
-      setTitle(''); setCompany(''); setLocation(''); setType('Full-time');
-      setSalary(''); setDescription(''); setRequirements(''); setCategory(''); setPosted('');
-    } catch (err) {
-      toast?.push('Failed to save job');
-    } finally {
-      setAdding(false);
-    }
   };
 
   return (
