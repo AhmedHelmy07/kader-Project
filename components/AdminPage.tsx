@@ -1102,8 +1102,15 @@ const CoursesSection: React.FC<{ courses: Course[]; editingCourse: Course | null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!title.trim() || !description.trim() || !instructor.trim() || !duration.trim() || !category.trim()) {
+      toast?.push('⚠️ Please fill all required fields');
+      return;
+    }
+
     setAdding(true);
     try {
+      console.log('Creating/Updating course:', { title, instructor, duration, category });
       await createOrUpdateCourse({
         id: editingCourse?.id,
         title,
@@ -1117,12 +1124,13 @@ const CoursesSection: React.FC<{ courses: Course[]; editingCourse: Course | null
         enrolled,
         rating,
       });
-      toast?.push(editingCourse ? 'Course updated!' : 'Course added!');
+      toast?.push(editingCourse ? '✅ Course updated!' : '✅ Course added!');
       setEditingCourse(null);
       setTitle(''); setDescription(''); setInstructor(''); setDuration(''); setLevel('Beginner');
       setCategory(''); setImage(''); setPrice(0); setEnrolled(0); setRating(0);
-    } catch (err) {
-      toast?.push('Failed to save course');
+    } catch (err: any) {
+      console.error('Course save error:', err);
+      toast?.push(`❌ Failed: ${err.message || 'Unknown error'}`);
     } finally {
       setAdding(false);
     }
@@ -1215,18 +1223,17 @@ const JobsSection: React.FC<{ jobs: Job[]; editingJob: Job | null; setEditingJob
       setCompany(editingJob.company || '');
       setLocation(editingJob.location || '');
       setType(editingJob.type || 'Full-time');
-      setSalary(editingJob.salary || '');
-      setDescription(editingJob.description || '');
-      setRequirements(editingJob.requirements || '');
-      setCategory(editingJob.category || '');
-      setPosted(editingJob.posted || '');
-    }
-  }, [editingJob]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!title.trim() || !company.trim() || !location.trim() || !description.trim() || !requirements.trim() || !category.trim()) {
+      toast?.push('⚠️ Please fill all required fields');
+      return;
+    }
+
     setAdding(true);
     try {
+      console.log('Creating/Updating job:', { title, company, location, category });
       await createOrUpdateJob({
         id: editingJob?.id,
         title,
@@ -1239,8 +1246,17 @@ const JobsSection: React.FC<{ jobs: Job[]; editingJob: Job | null; setEditingJob
         category,
         posted,
       });
-      toast?.push(editingJob ? 'Job updated!' : 'Job added!');
+      toast?.push(editingJob ? '✅ Job updated!' : '✅ Job added!');
       setEditingJob(null);
+      setTitle(''); setCompany(''); setLocation(''); setType('Full-time');
+      setSalary(''); setDescription(''); setRequirements(''); setCategory(''); setPosted('');
+    } catch (err: any) {
+      console.error('Job save error:', err);
+      toast?.push(`❌ Failed: ${err.message || 'Unknown error'}`);
+    } finally {
+      setAdding(false);
+    }
+  };  setEditingJob(null);
       setTitle(''); setCompany(''); setLocation(''); setType('Full-time');
       setSalary(''); setDescription(''); setRequirements(''); setCategory(''); setPosted('');
     } catch (err) {
