@@ -226,6 +226,14 @@ const AdminPage: React.FC = () => {
     contactMessages: contactMsgs.length,
     totalCourses: courses.length,
     totalJobs: jobs.length,
+    totalMedicalRecords: medicalRecords.length,
+    criticalMedical: medicalRecords.filter(r => r.severity === 'Critical').length,
+    highMedical: medicalRecords.filter(r => r.severity === 'High').length,
+    totalSOSAlerts: sosRecords.length,
+    pendingSOSAlerts: sosRecords.filter(r => r.status === 'Pending').length,
+    respondedSOSAlerts: sosRecords.filter(r => r.status === 'Responded').length,
+    resolvedSOSAlerts: sosRecords.filter(r => r.status === 'Resolved').length,
+    criticalSOSAlerts: sosRecords.filter(r => r.priority === 'Critical').length,
   };
 
   if (!unlocked) {
@@ -321,35 +329,187 @@ const AdminPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Grid */}
         {activeTab === 'dashboard' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in">
-            <StatCard
-              icon={<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>}
-              title="Total Products"
-              value={stats.totalProducts}
-              color="blue"
-              trend="+12%"
-            />
-            <StatCard
-              icon={<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>}
-              title="Total Orders"
-              value={stats.totalOrders}
-              color="green"
-              subtitle={`${stats.pendingOrders} pending`}
-            />
-            <StatCard
-              icon={<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
-              title="Open Tickets"
-              value={stats.openTickets}
-              color="yellow"
-              subtitle={`of ${tickets.length} total`}
-            />
-            <StatCard
-              icon={<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
-              title="Total Revenue"
-              value={`$${stats.totalRevenue.toFixed(2)}`}
-              color="purple"
-              trend="+23%"
-            />
+          <div className="animate-fade-in space-y-8">
+            {/* Core Metrics */}
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-4">📊 Core Metrics</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <StatCard
+                  icon={<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>}
+                  title="Total Products"
+                  value={stats.totalProducts}
+                  color="blue"
+                  trend="+12%"
+                />
+                <StatCard
+                  icon={<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>}
+                  title="Total Orders"
+                  value={stats.totalOrders}
+                  color="green"
+                  subtitle={`${stats.pendingOrders} pending`}
+                />
+                <StatCard
+                  icon={<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
+                  title="Open Tickets"
+                  value={stats.openTickets}
+                  color="yellow"
+                  subtitle={`of ${tickets.length} total`}
+                />
+                <StatCard
+                  icon={<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+                  title="Total Revenue"
+                  value={`$${stats.totalRevenue.toFixed(2)}`}
+                  color="purple"
+                  trend="+23%"
+                />
+              </div>
+            </div>
+
+            {/* Healthcare Metrics */}
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-4">🏥 Healthcare System</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <StatCard
+                  icon="📋"
+                  title="Medical Records"
+                  value={stats.totalMedicalRecords}
+                  color="blue"
+                />
+                <StatCard
+                  icon="🔴"
+                  title="Critical Medical"
+                  value={stats.criticalMedical}
+                  color="red"
+                  subtitle="Needs immediate attention"
+                />
+                <StatCard
+                  icon="🚨"
+                  title="SOS Alerts"
+                  value={stats.totalSOSAlerts}
+                  color="orange"
+                />
+                <StatCard
+                  icon="🚨"
+                  title="Pending SOS"
+                  value={stats.pendingSOSAlerts}
+                  color="red"
+                  subtitle="Awaiting response"
+                />
+              </div>
+            </div>
+
+            {/* Content Metrics */}
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-4">📚 Content & Community</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <StatCard
+                  icon="📚"
+                  title="Total Courses"
+                  value={stats.totalCourses}
+                  color="indigo"
+                />
+                <StatCard
+                  icon="💼"
+                  title="Total Jobs"
+                  value={stats.totalJobs}
+                  color="cyan"
+                />
+                <StatCard
+                  icon="💬"
+                  title="Community Messages"
+                  value={stats.communityMessages}
+                  color="green"
+                />
+                <StatCard
+                  icon="✉️"
+                  title="Contact Messages"
+                  value={stats.contactMessages}
+                  color="blue"
+                />
+              </div>
+            </div>
+
+            {/* Status Breakdown Charts */}
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-4">📈 Status Distribution</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-xl border border-white/20 p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">SOS Alert Status</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <span className="text-gray-300">Pending</span>
+                      </div>
+                      <span className="text-white font-bold">{stats.pendingSOSAlerts}</span>
+                    </div>
+                    <div className="w-full bg-red-500/20 rounded-full h-2">
+                      <div className="bg-red-500 h-2 rounded-full" style={{ width: `${stats.totalSOSAlerts > 0 ? (stats.pendingSOSAlerts / stats.totalSOSAlerts) * 100 : 0}%` }}></div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between pt-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                        <span className="text-gray-300">Responded</span>
+                      </div>
+                      <span className="text-white font-bold">{stats.respondedSOSAlerts}</span>
+                    </div>
+                    <div className="w-full bg-blue-500/20 rounded-full h-2">
+                      <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${stats.totalSOSAlerts > 0 ? (stats.respondedSOSAlerts / stats.totalSOSAlerts) * 100 : 0}%` }}></div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <span className="text-gray-300">Resolved</span>
+                      </div>
+                      <span className="text-white font-bold">{stats.resolvedSOSAlerts}</span>
+                    </div>
+                    <div className="w-full bg-green-500/20 rounded-full h-2">
+                      <div className="bg-green-500 h-2 rounded-full" style={{ width: `${stats.totalSOSAlerts > 0 ? (stats.resolvedSOSAlerts / stats.totalSOSAlerts) * 100 : 0}%` }}></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white/10 backdrop-blur-lg rounded-xl shadow-xl border border-white/20 p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">Medical Records Severity</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <span className="text-gray-300">Critical</span>
+                      </div>
+                      <span className="text-white font-bold">{stats.criticalMedical}</span>
+                    </div>
+                    <div className="w-full bg-red-500/20 rounded-full h-2">
+                      <div className="bg-red-500 h-2 rounded-full" style={{ width: `${stats.totalMedicalRecords > 0 ? (stats.criticalMedical / stats.totalMedicalRecords) * 100 : 0}%` }}></div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                        <span className="text-gray-300">High</span>
+                      </div>
+                      <span className="text-white font-bold">{stats.highMedical}</span>
+                    </div>
+                    <div className="w-full bg-orange-500/20 rounded-full h-2">
+                      <div className="bg-orange-500 h-2 rounded-full" style={{ width: `${stats.totalMedicalRecords > 0 ? (stats.highMedical / stats.totalMedicalRecords) * 100 : 0}%` }}></div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <span className="text-gray-300">Medium</span>
+                      </div>
+                      <span className="text-white font-bold">{stats.totalMedicalRecords - stats.criticalMedical - stats.highMedical}</span>
+                    </div>
+                    <div className="w-full bg-yellow-500/20 rounded-full h-2">
+                      <div className="bg-yellow-500 h-2 rounded-full" style={{ width: `${stats.totalMedicalRecords > 0 ? ((stats.totalMedicalRecords - stats.criticalMedical - stats.highMedical) / stats.totalMedicalRecords) * 100 : 0}%` }}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
