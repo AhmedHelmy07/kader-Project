@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import logo from '../images/logo.png';
 import hospitalFloor from '../images/hospital_floor.jpg';
-import img1 from '../images/1.jpg';
-import img2 from '../images/2.jpg';
-import img3 from '../images/3.jpg';
-import img4 from '../images/4.jpg';
-import img5 from '../images/5.jpg';
-import img7 from '../images/7.jpg';
-import img8 from '../images/8.jpg';
+import banner1 from '../images/banner1.jpg';
+import banner2 from '../images/banner2.jpg';
+import banner3 from '../images/banner3.jpg';
+import banner4 from '../images/banner4.jpg';
 import { Footer } from './Footer';
 import { Navbar } from './Navbar';
 import { useAuth } from '../auth/AuthContext';
@@ -31,12 +28,35 @@ const FeatureCard: React.FC<{ icon: string; title: string; children: React.React
 
 const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     const { user } = useAuth();
-    const images = [img1, img2, img3, img4, img5, img7, img8];
+    const bannerImages = [
+      { src: banner1, title: 'Advanced Navigation Technology' },
+      { src: banner2, title: 'Healthcare Innovation' },
+      { src: banner3, title: 'Seamless Experience' },
+      { src: banner4, title: 'Future of Mobility' }
+    ];
     const [idx, setIdx] = useState(0);
+    const [isAutoPlay, setIsAutoPlay] = useState(true);
+    
     useEffect(() => {
-        const t = setInterval(() => setIdx(i => (i + 1) % images.length), 3000);
+        if (!isAutoPlay) return;
+        const t = setInterval(() => setIdx(i => (i + 1) % bannerImages.length), 4000);
         return () => clearInterval(t);
-    }, []);
+    }, [isAutoPlay, bannerImages.length]);
+
+    const goToSlide = (slideIdx: number) => {
+      setIdx(slideIdx);
+      setIsAutoPlay(false);
+    };
+
+    const nextSlide = () => {
+      setIdx((i) => (i + 1) % bannerImages.length);
+      setIsAutoPlay(false);
+    };
+
+    const prevSlide = () => {
+      setIdx((i) => (i - 1 + bannerImages.length) % bannerImages.length);
+      setIsAutoPlay(false);
+    };
     return (
         <div className="bg-black text-white min-h-screen font-sans">
             <Navbar navigate={navigate} />
@@ -89,26 +109,91 @@ const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                 </section>
 
                 {/* Image Carousel */}
-                <section className="py-16 px-4 flex justify-center bg-gray-900/50">
-                    <div className="w-full max-w-5xl">
-                        <div className="relative rounded-2xl overflow-hidden shadow-2xl group">
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
-                            <img src={images[idx]} alt={`slide-${idx}`} className="w-full h-96 object-cover transition-all duration-1000 group-hover:scale-110" />
-                            <div className="absolute left-6 bottom-6 z-20">
-                                <div className="bg-blue-600/90 backdrop-blur-sm text-white px-5 py-2 rounded-lg shadow-xl font-semibold">
-                                    Photo {idx+1} of {images.length}
-                                </div>
-                            </div>
-                            <div className="absolute right-6 bottom-6 z-20 flex gap-2">
-                                {images.map((_, i) => (
-                                    <div
+                <section className="py-16 px-4 flex justify-center bg-gradient-to-b from-gray-900/50 to-black">
+                    <div className="w-full max-w-7xl">
+                        <div className="relative rounded-3xl overflow-hidden shadow-2xl group" onMouseEnter={() => setIsAutoPlay(false)} onMouseLeave={() => setIsAutoPlay(true)}>
+                            {/* Main Image with Fade Effect */}
+                            <div className="relative h-96 sm:h-[500px] overflow-hidden bg-gray-900">
+                                {bannerImages.map((banner, i) => (
+                                    <img
                                         key={i}
-                                        className={`h-2 rounded-full transition-all duration-300 ${
-                                            i === idx ? 'w-8 bg-blue-500' : 'w-2 bg-white/50'
+                                        src={banner.src}
+                                        alt={banner.title}
+                                        className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out transform ${
+                                            i === idx
+                                                ? 'opacity-100 scale-100'
+                                                : i === (idx - 1 + bannerImages.length) % bannerImages.length
+                                                ? 'opacity-0 scale-95'
+                                                : 'opacity-0 scale-105'
                                         }`}
-                                    ></div>
+                                    />
                                 ))}
                             </div>
+
+                            {/* Gradient Overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+
+                            {/* Banner Title */}
+                            <div className="absolute bottom-12 left-0 right-0 z-20 px-6 sm:px-12">
+                                <h3 className="text-3xl sm:text-5xl font-bold text-white mb-2 drop-shadow-lg">
+                                    {bannerImages[idx].title}
+                                </h3>
+                            </div>
+
+                            {/* Navigation Buttons */}
+                            <button
+                                onClick={prevSlide}
+                                className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 p-3 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full transition-all duration-300 hover:scale-110 group/btn"
+                                aria-label="Previous slide"
+                            >
+                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
+                            <button
+                                onClick={nextSlide}
+                                className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 p-3 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full transition-all duration-300 hover:scale-110 group/btn"
+                                aria-label="Next slide"
+                            >
+                                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
+                            </button>
+
+                            {/* Slide Counter */}
+                            <div className="absolute left-6 bottom-6 z-20">
+                                <div className="bg-gradient-to-r from-blue-600 to-blue-500/80 backdrop-blur-sm text-white px-4 py-2 rounded-full shadow-lg font-semibold text-sm flex items-center gap-2">
+                                    <span className="inline-flex items-center justify-center w-6 h-6 bg-white/20 rounded-full text-xs font-bold">
+                                        {idx + 1}
+                                    </span>
+                                    <span>/</span>
+                                    <span>{bannerImages.length}</span>
+                                </div>
+                            </div>
+
+                            {/* Dot Indicators */}
+                            <div className="absolute right-6 bottom-6 z-20 flex gap-3">
+                                {bannerImages.map((_, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => goToSlide(i)}
+                                        className={`transition-all duration-300 rounded-full backdrop-blur-sm hover:scale-125 ${
+                                            i === idx
+                                                ? 'w-8 h-3 bg-gradient-to-r from-blue-400 to-blue-500 shadow-lg shadow-blue-500/50'
+                                                : 'w-2 h-2 bg-white/50 hover:bg-white/70'
+                                        }`}
+                                        aria-label={`Go to slide ${i + 1}`}
+                                    ></button>
+                                ))}
+                            </div>
+
+                            {/* Auto-play Indicator */}
+                            {isAutoPlay && (
+                                <div className="absolute top-6 right-6 z-20 flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-xs text-gray-300">
+                                    <span className="inline-block w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span>
+                                    Auto-play
+                                </div>
+                            )}
                         </div>
                     </div>
                 </section>
