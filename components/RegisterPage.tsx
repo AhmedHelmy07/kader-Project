@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { KaderLogo } from './icons/KaderLogo';
 import { auth } from '../firebase';
 import { createUserRecord } from '../services/firestore';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 
 interface RegisterPageProps {
   navigate: (path: string) => void;
@@ -17,6 +18,8 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
   const [wheelChairId, setWheelChairId] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showQRScanner, setShowQRScanner] = useState(false);
+  const qrScannerRef = useRef<Html5QrcodeScanner | null>(null);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,6 +86,48 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
       setWelcome(false);
       navigate('#/dashboard');
     }, 1400);
+  };
+
+  // QR Scanner handlers
+  useEffect(() => {
+    if (showQRScanner) {
+      const scanner = new Html5QrcodeScanner(
+        'qr-reader',
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+          disableFlip: false,
+        },
+        false
+      );
+
+      const onScanSuccess = (decodedText: string) => {
+        setWheelChairId(decodedText);
+        setShowQRScanner(false);
+        scanner.clear();
+      };
+
+      const onScanError = (error: any) => {
+        // Silently ignore scan errors
+      };
+
+      scanner.render(onScanSuccess, onScanError);
+      qrScannerRef.current = scanner;
+    }
+
+    return () => {
+      if (qrScannerRef.current) {
+        qrScannerRef.current.clear().catch(() => {});
+      }
+    };
+  }, [showQRScanner]);
+
+  const handleCloseQRScanner = () => {
+    if (qrScannerRef.current) {
+      qrScannerRef.current.clear().catch(() => {});
+    }
+    setShowQRScanner(false);
   };
 
   return (
@@ -154,11 +199,25 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
             <label className="block text-blue-300 text-sm font-bold mb-2" htmlFor="wheelChairId">
               Wheelchair ID (optional)
             </label>
-            <input 
-                className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                id="wheelChairId" type="text" placeholder="Get ID from wheelchair QR code"
-                value={wheelChairId} onChange={(e) => setWheelChairId(e.target.value)}
-            />
+            <div className="flex gap-2">
+              <input 
+                  className="bg-gray-900 border border-blue-700 rounded flex-1 py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                  id="wheelChairId" type="text" placeholder="Get ID from wheelchair QR code"
+                  value={wheelChairId} onChange={(e) => setWheelChairId(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowQRScanner(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors flex items-center gap-2"
+                title="Scan QR Code"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <span className="hidden sm:inline">Scan</span>
+              </button>
+            </div>
           </div>
           <div className="mb-4">
             <label className="block text-blue-300 text-sm font-bold mb-2" htmlFor="password">
@@ -209,6 +268,35 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
             <KaderLogo className="w-20 h-20 mb-3" />
             <div className="text-xl font-bold text-white">Welcome to Kader</div>
             <div className="text-sm text-gray-300 mt-2">Your account has been created</div>
+          </div>
+        </div>
+      )}
+
+      {showQRScanner && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/80 p-4">
+          <div className="bg-gray-900 rounded-2xl shadow-2xl border border-blue-700 p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-white">Scan Wheelchair QR Code</h3>
+              <button
+                onClick={handleCloseQRScanner}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div id="qr-reader" className="mb-4"></div>
+            <p className="text-gray-400 text-sm text-center">
+              Position the QR code within the frame to scan
+            </p>
+            <button
+              onClick={handleCloseQRScanner}
+              type="button"
+              className="w-full mt-4 bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}
