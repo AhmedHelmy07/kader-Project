@@ -12,10 +12,10 @@ import {
 
 const SOSPage: React.FC = () => {
   const { user } = useAuth();
+  const toast = useToast();
   const [records, setRecords] = useState<SOSRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<string>('All');
   const [statusFilter, setStatusFilter] = useState<string>('All');
 
@@ -41,7 +41,7 @@ const SOSPage: React.FC = () => {
     e.preventDefault();
 
     if (!user || !formData.message.trim()) {
-      setToast({ message: 'Please enter an SOS message', type: 'error' });
+      toast?.push('Please enter an SOS message');
       return;
     }
 
@@ -54,7 +54,7 @@ const SOSPage: React.FC = () => {
         status: 'Pending',
       });
 
-      setToast({ message: '🚨 SOS Alert sent successfully!', type: 'success' });
+      toast?.push('🚨 SOS Alert sent successfully!');
 
       // Reset form
       setFormData({
@@ -65,7 +65,7 @@ const SOSPage: React.FC = () => {
       setShowForm(false);
     } catch (error) {
       console.error('Error sending SOS:', error);
-      setToast({ message: 'Error sending SOS alert', type: 'error' });
+      toast?.push('Error sending SOS alert');
     }
   };
 
@@ -74,10 +74,10 @@ const SOSPage: React.FC = () => {
       await updateSOSRecord(recordId, {
         status: newStatus,
       });
-      setToast({ message: 'SOS status updated', type: 'success' });
+      toast?.push('SOS status updated');
     } catch (error) {
       console.error('Error updating SOS:', error);
-      setToast({ message: 'Error updating SOS record', type: 'error' });
+      toast?.push('Error updating SOS record');
     }
   };
 
@@ -86,10 +86,10 @@ const SOSPage: React.FC = () => {
 
     try {
       await deleteSOSRecord(recordId);
-      setToast({ message: 'SOS record deleted', type: 'success' });
+      toast?.push('SOS record deleted');
     } catch (error) {
       console.error('Error deleting SOS:', error);
-      setToast({ message: 'Error deleting SOS record', type: 'error' });
+      toast?.push('Error deleting SOS record');
     }
   };
 
@@ -344,14 +344,6 @@ const SOSPage: React.FC = () => {
           </div>
         )}
       </div>
-
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
     </div>
   );
 };
