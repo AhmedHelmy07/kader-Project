@@ -10,6 +10,7 @@ const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
   const [items, setItems] = useState<CartItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { user } = useAuth();
   const toast = useToast();
 
@@ -17,30 +18,62 @@ const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
   useEffect(() => { itemsRef.current = items; }, [items]);
 
   useEffect(() => {
-    const raw = localStorage.getItem('cart');
-    if (raw) setItems(JSON.parse(raw));
+    try {
+      const raw = localStorage.getItem('cart');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          setItems(parsed);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load cart from localStorage:', err);
+      setError('Failed to load cart');
+    }
+
     let off: any;
     if (user?.uid) {
       (async () => {
-        const remote = await getCartForUser(user.uid);
-        if (remote && remote.length) setItems(remote);
-        off = onCartChanged(user.uid, (it: any[]) => {
-          try {
-            const a = JSON.stringify(it || []);
-            const b = JSON.stringify(itemsRef.current || []);
-            if (a !== b) setItems(it);
-          } catch (e) { setItems(it); }
-        });
+        try {
+          const remote = await getCartForUser(user.uid);
+          if (remote && Array.isArray(remote) && remote.length) {
+            setItems(remote);
+          }
+          off = onCartChanged(user.uid, (it: any[]) => {
+            try {
+              if (Array.isArray(it)) {
+                const a = JSON.stringify(it || []);
+                const b = JSON.stringify(itemsRef.current || []);
+                if (a !== b) setItems(it);
+              }
+            } catch (e) { 
+              console.error('Cart update error:', e);
+              if (Array.isArray(it)) setItems(it);
+            }
+          });
+        } catch (err) {
+          console.error('Failed to sync cart from Firestore:', err);
+          setError('Failed to sync cart');
+        }
       })();
     }
     return () => off && off();
   }, [user]);
 
   useEffect(() => {
+    setError(null); // Clear errors on successful update
     const id = setTimeout(() => {
-      localStorage.setItem('cart', JSON.stringify(items));
-      if (user?.uid) {
-        setCartForUser(user.uid, items).catch(console.error);
+      try {
+        localStorage.setItem('cart', JSON.stringify(items));
+        if (user?.uid) {
+          setCartForUser(user.uid, items).catch((err) => {
+            console.error('Failed to save cart to Firestore:', err);
+            setError('Failed to save cart');
+          });
+        }
+      } catch (err) {
+        console.error('Failed to save cart:', err);
+        setError('Failed to save cart');
       }
     }, 150);
     return () => clearTimeout(id);
@@ -81,25 +114,43 @@ const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
     }
   };
 
-  const removeAt = (idx: number) => {
-    const copy = [...items];
-    copy.splice(idx, 1);
+  const removeAt = (productId: string | undefined) => {
+    if (!productId) {
+      toast?.push('❌ Error: Product ID not found');
+      return;
+    }
+    const copy = items.filter(item => item.product.id !== productId);
     setItems(copy);
-    toast?.push('Item removed from cart');
+    toast?.push('✅ Item removed from cart');
   };
 
-  const updateQuantity = (idx: number, qty: number) => {
-    const copy = [...items];
-    copy[idx].qty = Math.max(1, qty);
+  const updateQuantity = (productId: string | undefined, qty: number) => {
+    if (!productId) {
+      toast?.push('❌ Error: Product ID not found');
+      return;
+    }
+    const validQty = Math.max(1, qty);
+    const copy = items.map(item =>
+      item.product.id === productId ? { ...item, qty: validQty } : item
+    );
     setItems(copy);
   };
 
   const clearCart = () => {
     if (confirm('Are you sure you want to clear your entire cart?')) {
-      setItems([]);
-      localStorage.removeItem('cart');
-      if (user?.uid) setCartForUser(user.uid, []);
-      toast?.push('Cart cleared');
+      try {
+        setItems([]);
+        localStorage.removeItem('cart');
+        if (user?.uid) setCartForUser(user.uid, []).catch(err => {
+          console.error('Failed to clear cart in Firestore:', err);
+          setError('Failed to clear cart');
+        });
+        toast?.push('✅ Cart cleared');
+      } catch (err) {
+        console.error('Failed to clear cart:', err);
+        setError('Failed to clear cart');
+        toast?.push('❌ Failed to clear cart');
+      }
     }
   };
 
@@ -127,6 +178,22 @@ const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {error && (
+          <div className="mb-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-300 flex items-start gap-3">
+            <svg className="w-5 h-5 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+            <div>
+              <p className="font-semibold">Error</p>
+              <p className="text-sm">{error}</p>
+            </div>
+            <button onClick={() => setError(null)} className="ml-auto text-red-300 hover:text-red-200">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        )}
         {items.length === 0 ? (
           <div className="text-center py-20">
             <div className="inline-block p-8 bg-gray-800/50 rounded-2xl border border-gray-700">
@@ -148,9 +215,9 @@ const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
               <div className="bg-white/10 backdrop-blur-lg rounded-xl border border-white/20 overflow-hidden">
-                {items.map((item, idx) => (
+                {items.map((item) => (
                   <div
-                    key={idx}
+                    key={item.product.id || Math.random()}
                     className="p-6 border-b border-white/10 last:border-0 hover:bg-white/5 transition-all duration-300 flex gap-6"
                   >
                     {/* Product Image */}
@@ -180,7 +247,7 @@ const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
                     <div className="flex flex-col items-center gap-3">
                       <div className="flex items-center gap-2 bg-gray-800/50 rounded-lg p-2">
                         <button
-                          onClick={() => updateQuantity(idx, item.qty - 1)}
+                          onClick={() => updateQuantity(item.product.id, item.qty - 1)}
                           className="p-1 hover:bg-white/20 rounded transition-all duration-200"
                           title="Decrease quantity"
                         >
@@ -192,11 +259,11 @@ const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
                           type="number"
                           min="1"
                           value={item.qty}
-                          onChange={(e) => updateQuantity(idx, parseInt(e.target.value) || 1)}
+                          onChange={(e) => updateQuantity(item.product.id, parseInt(e.target.value) || 1)}
                           className="w-12 bg-transparent text-center font-bold text-white focus:outline-none text-lg"
                         />
                         <button
-                          onClick={() => updateQuantity(idx, item.qty + 1)}
+                          onClick={() => updateQuantity(item.product.id, item.qty + 1)}
                           className="p-1 hover:bg-white/20 rounded transition-all duration-200"
                           title="Increase quantity"
                         >
@@ -206,9 +273,12 @@ const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
                         </button>
                       </div>
                       <button
-                        onClick={() => removeAt(idx)}
-                        className="w-full px-3 py-2 bg-red-500/20 hover:bg-red-500/40 text-red-400 hover:text-red-300 rounded-lg transition-all duration-300 font-medium text-sm"
+                        onClick={() => removeAt(item.product.id)}
+                        className="w-full px-3 py-2 bg-red-500/20 hover:bg-red-500/40 text-red-400 hover:text-red-300 rounded-lg transition-all duration-300 font-medium text-sm flex items-center justify-center gap-1"
                       >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
                         Remove
                       </button>
                     </div>
