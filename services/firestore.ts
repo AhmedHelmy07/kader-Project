@@ -287,11 +287,22 @@ export const getAdminPassword = async () => {
 
 // Courses
 export const createOrUpdateCourse = async (course: Course) => {
-  const data = { ...course, createdAt: firebase.firestore.FieldValue.serverTimestamp() } as any;
   if (course.id) {
-    await coursesCol.doc(course.id).set(data, { merge: true });
+    // Update existing
+    const { id, ...dataWithoutId } = course;
+    await coursesCol.doc(course.id).set({
+      ...dataWithoutId,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
     return course.id;
   }
+  // Create new - exclude id field
+  const { id, ...dataWithoutId } = course;
+  const data = { 
+    ...dataWithoutId, 
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  } as any;
   const ref = await coursesCol.add(data);
   return ref.id;
 };
@@ -318,13 +329,23 @@ export const onCoursesChanged = (cb: (courses: Course[]) => void) => {
   });
 };
 
-// Jobs
 export const createOrUpdateJob = async (job: Job) => {
-  const data = { ...job, createdAt: firebase.firestore.FieldValue.serverTimestamp() } as any;
   if (job.id) {
-    await jobsCol.doc(job.id).set(data, { merge: true });
+    // Update existing
+    const { id, ...dataWithoutId } = job;
+    await jobsCol.doc(job.id).set({
+      ...dataWithoutId,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
     return job.id;
   }
+  // Create new - exclude id field
+  const { id, ...dataWithoutId } = job;
+  const data = { 
+    ...dataWithoutId, 
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  } as any;
   const ref = await jobsCol.add(data);
   return ref.id;
 };
