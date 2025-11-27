@@ -16,6 +16,7 @@ const SOSPage: React.FC = () => {
   const [records, setRecords] = useState<SOSRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [priorityFilter, setPriorityFilter] = useState<string>('All');
   const [statusFilter, setStatusFilter] = useState<string>('All');
 
@@ -46,15 +47,24 @@ const SOSPage: React.FC = () => {
     }
 
     try {
-      await createSOSRecord({
-        uid: user.uid,
-        userEmail: user.email || '',
-        message: formData.message,
-        priority: formData.priority,
-        status: 'Pending',
-      });
-
-      toast?.push('🚨 SOS Alert sent successfully!');
+      if (editingId) {
+        // Update existing SOS record
+        await updateSOSRecord(editingId, {
+          message: formData.message,
+          priority: formData.priority,
+        });
+        toast?.push('🚨 SOS Alert updated successfully!');
+      } else {
+        // Create new SOS record
+        await createSOSRecord({
+          uid: user.uid,
+          userEmail: user.email || '',
+          message: formData.message,
+          priority: formData.priority,
+          status: 'Pending',
+        });
+        toast?.push('🚨 SOS Alert sent successfully!');
+      }
 
       // Reset form
       setFormData({
@@ -62,11 +72,32 @@ const SOSPage: React.FC = () => {
         priority: 'High',
         location: '',
       });
+      setEditingId(null);
       setShowForm(false);
     } catch (error) {
       console.error('Error sending SOS:', error);
       toast?.push('Error sending SOS alert');
     }
+  };
+
+  const handleEdit = (record: SOSRecord) => {
+    setFormData({
+      message: record.message,
+      priority: record.priority,
+      location: '',
+    });
+    setEditingId(record.id || null);
+    setShowForm(true);
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      message: '',
+      priority: 'High',
+      location: '',
+    });
+    setEditingId(null);
+    setShowForm(false);
   };
 
   const handleUpdateStatus = async (recordId: string, newStatus: 'Pending' | 'Responded' | 'Resolved') => {
@@ -155,7 +186,9 @@ const SOSPage: React.FC = () => {
         {/* Form */}
         {showForm && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-8 border-2 border-red-500">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900">Send Emergency Alert</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900">
+              {editingId ? 'Edit Emergency Alert' : 'Send Emergency Alert'}
+            </h2>
             <form onSubmit={handleSendSOS} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -196,14 +229,11 @@ const SOSPage: React.FC = () => {
                   type="submit"
                   className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-bold text-lg"
                 >
-                  🚨 Send SOS Alert
+                  {editingId ? '✏️ Update Alert' : '🚨 Send SOS Alert'}
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setFormData({ message: '', priority: 'High', location: '' });
-                    setShowForm(false);
-                  }}
+                  onClick={handleCancel}
                   className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition font-medium"
                 >
                   Cancel
@@ -315,6 +345,14 @@ const SOSPage: React.FC = () => {
                   )}
 
                   <div className="flex gap-2">
+                    {record.status === 'Pending' && (
+                      <button
+                        onClick={() => handleEdit(record)}
+                        className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded hover:bg-yellow-200 transition text-xs font-medium"
+                      >
+                        Edit
+                      </button>
+                    )}
                     {record.status === 'Pending' && (
                       <button
                         onClick={() => record.id && handleUpdateStatus(record.id, 'Responded')}

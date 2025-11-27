@@ -78,7 +78,10 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
       setIsLoading(false);
     }
   };
+ 
 
+
+  
   const [welcome, setWelcome] = useState(false);
   const showWelcome = () => {
     setWelcome(true);
