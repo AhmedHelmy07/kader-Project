@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { KaderLogo } from './icons/KaderLogo';
 import { useAuth } from '../auth/AuthContext';
+import { useLanguage } from '../i18n/LanguageContext';
 import { auth } from '../firebase';
 
 interface NavbarProps {
@@ -33,9 +34,10 @@ const NavLink: React.FC<{
 
 export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
     const { user } = useAuth();
+    const { language, setLanguage, t, availableLanguages } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [languageDropdown, setLanguageDropdown] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -54,7 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
     const handleNav = (path: string) => {
       navigate(path);
       setIsOpen(false);
-      setDropdownOpen(false);
+      setLanguageDropdown(false);
     }
 
     const navItems = user ? [
@@ -97,8 +99,44 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
                         ))}
                     </div>
 
-                    {/* Desktop Auth */}
+                    {/* Desktop Auth + Language */}
                     <div className="hidden lg:flex items-center gap-3">
+                        {/* Language Switcher */}
+                        <div className="relative">
+                            <button
+                                onClick={() => setLanguageDropdown(!languageDropdown)}
+                                className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-300"
+                            >
+                                <span className="text-lg">{availableLanguages.find(l => l.code === language)?.flag}</span>
+                                <span className="hidden sm:inline text-xs uppercase font-bold">{language}</span>
+                                <svg className={`w-4 h-4 transition-transform duration-300 ${languageDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                                </svg>
+                            </button>
+                            
+                            {languageDropdown && (
+                                <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-xl border border-white/10 overflow-hidden z-50">
+                                    {availableLanguages.map(lang => (
+                                        <button
+                                            key={lang.code}
+                                            onClick={() => {
+                                                setLanguage(lang.code);
+                                                setLanguageDropdown(false);
+                                            }}
+                                            className={`w-full flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all duration-300 ${
+                                                language === lang.code
+                                                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white'
+                                                    : 'text-gray-300 hover:text-white hover:bg-white/10'
+                                            }`}
+                                        >
+                                            <span className="text-lg">{lang.flag}</span>
+                                            <span>{lang.name}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
                         {user ? (
                             <>
                                 <div className="text-sm text-gray-300 px-3 py-2 rounded-lg bg-white/5">
@@ -109,7 +147,7 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
                                     className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-2.5 px-4 rounded-lg text-sm transition-all duration-300 shadow-lg shadow-red-500/30 hover:shadow-xl hover:shadow-red-500/50 active:scale-95"
                                 >
                                     <LogoutIcon />
-                                    <span className="hidden sm:inline">Logout</span>
+                                    <span className="hidden sm:inline">{t('nav.logout')}</span>
                                 </button>
                             </>
                         ) : (
@@ -118,13 +156,13 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
                                     onClick={() => navigate('#/login')}
                                     className="text-gray-300 hover:text-white font-semibold py-2.5 px-4 rounded-lg text-sm transition-all duration-300 hover:bg-white/10"
                                 >
-                                    Login
+                                    {t('nav.login')}
                                 </button>
                                 <button
                                     onClick={() => navigate('#/register')}
                                     className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2.5 px-4 rounded-lg text-sm transition-all duration-300 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/50 active:scale-95"
                                 >
-                                    Register
+                                    {t('nav.register')}
                                 </button>
                             </>
                         )}
@@ -146,10 +184,35 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
                 {isOpen && (
                     <div className="lg:hidden border-t border-white/10 bg-gradient-to-b from-gray-900/50 to-gray-950/50 backdrop-blur-md">
                         <div className="px-2 py-4 space-y-2 max-h-[calc(100vh-64px)] overflow-y-auto">
+                            {/* Mobile Language Selector */}
+                            <div className="px-2 py-2 mb-3">
+                                <p className="text-xs text-gray-400 px-2 mb-2 font-semibold uppercase">Change Language</p>
+                                <div className="grid grid-cols-5 gap-1">
+                                    {availableLanguages.map(lang => (
+                                        <button
+                                            key={lang.code}
+                                            onClick={() => {
+                                                setLanguage(lang.code);
+                                                setIsOpen(false);
+                                            }}
+                                            className={`p-2 rounded-lg text-center transition-all duration-300 ${
+                                                language === lang.code
+                                                    ? 'bg-gradient-to-r from-blue-600 to-blue-500 ring-2 ring-blue-400'
+                                                    : 'bg-white/5 hover:bg-white/10'
+                                            }`}
+                                            title={lang.name}
+                                        >
+                                            <span className="text-lg block">{lang.flag}</span>
+                                            <span className="text-xs text-gray-400 block">{lang.code.toUpperCase()}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
                             {/* Mobile Auth Section */}
                             {user && (
                                 <div className="px-3 py-3 bg-white/5 rounded-lg border border-white/10 mb-3">
-                                    <p className="text-xs text-gray-400 mb-1">Signed in as</p>
+                                    <p className="text-xs text-gray-400 mb-1">{t('nav.signedInAs')}</p>
                                     <p className="text-sm font-semibold text-white truncate">{user.email}</p>
                                 </div>
                             )}
@@ -179,7 +242,7 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
                                     className="w-full mt-3 flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold px-4 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
                                 >
                                     <LogoutIcon />
-                                    <span>Logout</span>
+                                    <span>{t('nav.logout')}</span>
                                 </button>
                             ) : (
                                 <>
@@ -187,13 +250,13 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
                                         onClick={() => handleNav('#/login')}
                                         className="w-full mt-3 text-gray-300 hover:text-white font-semibold px-4 py-3 rounded-lg transition-all duration-300 hover:bg-white/10 border border-white/20"
                                     >
-                                        Login
+                                        {t('nav.login')}
                                     </button>
                                     <button
                                         onClick={() => handleNav('#/register')}
                                         className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold px-4 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
                                     >
-                                        Register
+                                        {t('nav.register')}
                                     </button>
                                 </>
                             )}

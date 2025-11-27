@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './auth/AuthContext';
+import { LanguageProvider } from './i18n/LanguageContext';
 import { ToastProvider } from './components/Toast';
 import HomePage from './components/HomePage';
 import DashboardPage from './components/DashboardPage';
@@ -76,11 +77,13 @@ const AppRouter: React.FC = () => {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <AppRouter />
-      </ToastProvider>
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <ToastProvider>
+          <AppRouter />
+        </ToastProvider>
+      </AuthProvider>
+    </LanguageProvider>
   );
 };
 
