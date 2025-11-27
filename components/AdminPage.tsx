@@ -580,12 +580,38 @@ const ProductsSection: React.FC<any> = ({
               type="number"
               className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
             />
-            <input
-              value={image}
-              onChange={e => setImage(e.target.value)}
-              placeholder="Image URL"
-              className="bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
-            />
+          </div>
+          {/* Image Upload Section */}
+          <div className="space-y-3">
+            <div>
+              <label className="block text-sm text-gray-300 font-medium mb-2">Product Image</label>
+              <div className="flex gap-2">
+                <label className="flex-1 flex items-center justify-center px-4 py-3 bg-white/5 border-2 border-dashed border-blue-500/30 rounded-xl cursor-pointer hover:bg-white/10 hover:border-blue-500/50 transition-all duration-300 text-blue-300 font-medium">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploadingImage}
+                    className="hidden"
+                  />
+                  <span>{uploadingImage ? `Uploading ${uploadProgress}%...` : 'Click to Upload'}</span>
+                </label>
+              </div>
+              {uploadProgress > 0 && uploadProgress < 100 && (
+                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden mt-2">
+                  <div className="h-full bg-gradient-to-r from-blue-500 to-cyan-600 transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm text-gray-300 font-medium mb-2">Or enter Image URL</label>
+              <input
+                value={image}
+                onChange={e => setImage(e.target.value)}
+                placeholder="https://example.com/image.jpg"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300"
+              />
+            </div>
           </div>
           <textarea
             value={description}
@@ -1052,6 +1078,41 @@ const JobsSection: React.FC<{ jobs: Job[]; editingJob: Job | null; setEditingJob
           </div>
         ))}
       </div>
+    </div>
+
+      {/* Confirmation Modal */}
+      {confirmDelete && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-gray-900 to-black border border-red-500/20 rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scale-in">
+            <div className="flex justify-center mb-4">
+              <div className="p-3 bg-red-500/20 rounded-full">
+                <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4v2m0 0v2m0-6v-2m0 6v2" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 13l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
+            <h3 className="text-2xl font-bold text-white text-center mb-2">Delete Confirmation</h3>
+            <p className="text-gray-300 text-center mb-6">
+              Are you sure you want to delete <span className="font-semibold text-red-400">"{confirmDelete.name}"</span>? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="flex-1 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-xl transition-all duration-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteAction}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:shadow-lg hover:shadow-red-500/50 text-white font-medium rounded-xl transition-all duration-300"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
