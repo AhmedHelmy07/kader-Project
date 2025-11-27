@@ -52,7 +52,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                     <div className="relative z-10 flex flex-col items-center">
                         <div className="mb-8 animate-float">
                             <span className="relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-full p-6 flex items-center justify-center border-4 border-blue-600 shadow-2xl shadow-blue-500/50">
-                                <img src={logo} alt="Kader Logo" className="w-24 h-24" />
+                                <img src={logo} alt="Kader Logo" className="h-24" />
                                 <span className="absolute inset-0 rounded-full border-4 border-blue-400 animate-ping opacity-20"></span>
                             </span>
                         </div>
