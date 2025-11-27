@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { KaderLogo } from './icons/KaderLogo';
+import { useLanguage } from '../i18n/LanguageContext';
 import { auth } from '../firebase';
 import { createUserRecord } from '../services/firestore';
 import { Html5QrcodeScanner } from 'html5-qrcode';
@@ -9,6 +10,7 @@ interface RegisterPageProps {
 }
 
 const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

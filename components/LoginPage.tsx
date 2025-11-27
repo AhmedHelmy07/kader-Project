@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { KaderLogo } from './icons/KaderLogo';
+import { useLanguage } from '../i18n/LanguageContext';
 import { auth, googleProvider } from '../firebase';
 
 interface LoginPageProps {
@@ -7,6 +8,7 @@ interface LoginPageProps {
 }
 
 const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -74,7 +76,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
           {error && <p className="bg-red-500/20 text-red-400 p-3 rounded-md mb-4 text-sm">{error}</p>}
           <div className="mb-4">
             <label className="block text-blue-300 text-sm font-bold mb-2" htmlFor="email">
-              Email
+              {t('auth.email')}
             </label>
             <input 
                 className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
@@ -84,7 +86,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
           </div>
           <div className="mb-6">
             <label className="block text-blue-300 text-sm font-bold mb-2" htmlFor="password">
-              Password
+              {t('auth.password')}
             </label>
             <input 
                 className="bg-gray-900 border border-blue-700 rounded w-full py-2 px-3 text-white mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" 
@@ -93,10 +95,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
             />
           </div>
           <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg" type="submit">
-            Sign In
+            {t('auth.login')}
           </button>
           <button type="button" onClick={() => navigate('#/')} className="w-full mt-2 bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg">
-            Cancel
+            {t('common.cancel')}
           </button>
         </form>
         <div className="relative my-6">
@@ -104,7 +106,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
                 <div className="w-full border-t border-blue-700" />
             </div>
             <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gray-800 text-blue-300">Or continue with</span>
+                <span className="px-2 bg-gray-800 text-blue-300">{t('common.next')} Google</span>
             </div>
         </div>
         <button onClick={handleGoogleSignIn} className="w-full flex justify-center items-center gap-2 bg-gray-900 hover:bg-blue-900 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg">
@@ -112,9 +114,9 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
             Google
         </button>
          <p className="text-center text-blue-300 text-sm mt-6">
-          Don't have an account?{' '}
+          {t('auth.noAccount')}{' '}
           <a href="#/register" onClick={(e) => { e.preventDefault(); navigate('#/register'); }} className="font-bold text-blue-400 hover:text-blue-500">
-            Register here
+            {t('auth.registerHere')}
           </a>
         </p>
       </div>

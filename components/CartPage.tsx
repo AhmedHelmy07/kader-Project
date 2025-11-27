@@ -3,10 +3,12 @@ import type { Product } from '../services/firestore';
 import { createOrder, setCartForUser, getCartForUser, onCartChanged } from '../services/firestore';
 import { useToast } from './Toast';
 import { useAuth } from '../auth/AuthContext';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface CartItem { product: Product; qty: number }
 
 const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) => {
+  const { t } = useLanguage();
   const [items, setItems] = useState<CartItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
@@ -161,8 +163,8 @@ const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-4xl font-bold text-white">Shopping Cart</h1>
-              <p className="text-gray-400 mt-1">{items.length} item{items.length !== 1 ? 's' : ''} in your cart</p>
+              <h1 className="text-4xl font-bold text-white">{t('cart.title')}</h1>
+              <p className="text-gray-400 mt-1">{items.length} item{items.length !== 1 ? 's' : ''} {t('cart.empty').split(' ')[2]}</p>
             </div>
             <button
               onClick={() => navigate('#/store')}
@@ -171,7 +173,7 @@ const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
-              Continue Shopping
+              {t('cart.continueShopping')}
             </button>
           </div>
         </div>
