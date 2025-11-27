@@ -306,7 +306,7 @@ const AdminPage: React.FC = () => {
               <div className="relative">
                 <div className="absolute inset-0 bg-red-500 rounded-full blur-lg opacity-50"></div>
                 <div className="relative p-3 bg-gradient-to-br from-red-500 to-orange-600 rounded-xl">
-                  <KaderLogo className="w-10 h-10" />
+                  <KaderLogo className="h-10" />
                 </div>
               </div>
               <div>

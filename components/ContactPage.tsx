@@ -34,7 +34,7 @@ const ContactPage: React.FC = () => {
           <div className="flex justify-center mb-6">
             <div className="relative">
               <div className="absolute inset-0 bg-indigo-500 rounded-full blur-xl opacity-50 animate-pulse"></div>
-              <KaderLogo className="w-20 h-20 relative z-10" />
+              <KaderLogo className="h-20 relative z-10" />
             </div>
           </div>
           <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">

@@ -76,7 +76,7 @@ export const Navbar: React.FC<NavbarProps> = ({ navigate }) => {
                                 className="group flex-shrink-0 flex items-center gap-3 text-white transition-all duration-300 hover:scale-105"
                             >
                                 <span className="bg-gradient-to-br from-blue-500 to-blue-700 rounded-full p-2 flex items-center justify-center shadow-lg shadow-blue-500/50 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-blue-500/70 group-hover:rotate-12">
-                                    <KaderLogo className="h-8 w-8" />
+                                    <KaderLogo className="h-8" />
                                 </span>
                                 <span className="font-bold text-xl bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Kader Project</span>
                             </a>

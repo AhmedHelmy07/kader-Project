@@ -44,7 +44,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-black flex flex-col justify-center items-center p-4">
       <div className="text-center mb-8">
-        <KaderLogo className="w-24 h-24 mx-auto mb-4 drop-shadow-lg" />
+        <KaderLogo className="h-24 mx-auto mb-4 drop-shadow-lg" />
         <h1 className="text-5xl font-extrabold text-white mb-2 tracking-tight">Welcome to Kader</h1>
         <p className="text-lg text-blue-200 mb-4">Smart Autonomous Wheelchair System</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center text-gray-300 text-base">
@@ -61,7 +61,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ navigate }) => {
             <div className="fixed inset-0 flex items-center justify-center z-50">
               <div className="bg-black/60 absolute inset-0" />
               <div className="relative bg-gradient-to-br from-gray-900 to-black p-6 rounded-xl flex flex-col items-center text-center border border-blue-700">
-                <KaderLogo className="w-20 h-20 mb-3" />
+                <KaderLogo className="h-20 mb-3" />
                 <div className="text-xl font-bold text-white">Welcome to Kader</div>
                 <div className="text-sm text-gray-300 mt-2">You are now signed in</div>
               </div>
