@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { listProducts, Product, setCartForUser, getCartForUser, onCartChanged } from '../services/firestore';
 import ProductCard from './ProductCard';
 import { useAuth } from '../auth/AuthContext';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface StorePageProps { navigate: (path: string) => void }
 
 const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
+  const { t } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const { user } = useAuth();
   const [cart, setCart] = useState<Array<{ product: Product; qty: number }>>([]);
@@ -54,7 +56,7 @@ const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
           <div>
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">Store</h2>
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent mb-2">{t('store.title')}</h2>
             <p className="text-gray-400">Premium wheelchair accessories and equipment</p>
           </div>
           <button
@@ -64,7 +66,7 @@ const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
-            <span>Cart ({cart.reduce((s,i)=>s+i.qty,0)})</span>
+            <span>{t('cart.title')} ({cart.reduce((s,i)=>s+i.qty,0)})</span>
             {cart.length > 0 && (
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center animate-pulse">
                 {cart.reduce((s,i)=>s+i.qty,0)}

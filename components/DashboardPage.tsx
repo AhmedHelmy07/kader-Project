@@ -4,6 +4,7 @@ import { HospitalMap } from './HospitalMap';
 import { DashboardControls } from './DashboardControls';
 import { WheelchairInfoPanel } from './WheelchairInfoPanel';
 import { useSimulation } from '../hooks/useSimulation';
+import { useLanguage } from '../i18n/LanguageContext';
 import type { Wheelchair } from '../types';
 import { WheelchairStatus } from '../types';
 import { MAP_WIDTH, MAP_HEIGHT } from '../constants';
@@ -25,6 +26,7 @@ const StatCard: React.FC<{title: string, value: string | number, color: string, 
 
 
 const DashboardPage: React.FC = () => {
+  const { t } = useLanguage();
   const [selectedWheelchairId, setSelectedWheelchairId] = useState<string | null>(null);
   const {
     wheelchairs,
