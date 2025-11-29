@@ -177,7 +177,7 @@ const ContactPage: React.FC = () => {
                 For immediate assistance, check out our Support Center where you can create tickets and track their status.
               </p>
               <a
-                href="/support"
+                href="/#/support"
                 className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-medium transition-colors duration-300"
               >
                 Visit Support Center
@@ -199,7 +199,7 @@ const ContactPage: React.FC = () => {
                 Connect with other users, share experiences, and get community support.
               </p>
               <a
-                href="/community"
+                href="/#/community"
                 className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 font-medium transition-colors duration-300"
               >
                 Visit Community Hub
