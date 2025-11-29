@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { postMessage, listRecentMessages, onMessagesChanged } from '../services/firestore';
 import { useAuth } from '../auth/AuthContext';
+import { useLanguage } from '../i18n/LanguageContext';
 import { KaderLogo } from './icons/KaderLogo';
 import { useToast } from './Toast';
 
 const CommunityPage: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [text, setText] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
   const [isPosting, setIsPosting] = useState(false);
@@ -17,16 +19,16 @@ const CommunityPage: React.FC = () => {
 
   const toast = useToast();
   const send = async () => {
-    if (!user) { return toast?.push ? toast.push('Please login to post') : alert('Please login to post'); }
-    if (!text.trim()) { return toast?.push ? toast.push('Please write a message') : alert('Please write a message'); }
+    if (!user) { return toast?.push ? toast.push(t('community.loginPrompt')) : alert(t('community.loginPrompt')); }
+    if (!text.trim()) { return toast?.push ? toast.push(t('community.emptyMessage')) : alert(t('community.emptyMessage')); }
     
     setIsPosting(true);
     try {
       await postMessage({ userEmail: user.email || 'unknown', text: text.trim() });
       setText('');
-      toast?.push?.('Posted successfully!');
+      toast?.push?.(t('community.postSuccess'));
     } catch (error) {
-      toast?.push?.('Failed to post message');
+      toast?.push?.(t('community.postFailed'));
     } finally {
       setIsPosting(false);
     }
@@ -48,10 +50,10 @@ const CommunityPage: React.FC = () => {
             </div>
           </div>
           <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
-            Community Hub
+            {t('community.hub')}
           </h1>
           <p className="text-xl text-blue-200 max-w-2xl mx-auto">
-            Connect, share experiences, and engage with the Kader community
+            {t('community.tagline')}
           </p>
         </div>
 
@@ -72,12 +74,12 @@ const CommunityPage: React.FC = () => {
                   onChange={(e) => setText(e.target.value)}
                   className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
                   rows={4}
-                  placeholder={user ? "Share your thoughts with the community..." : "Please login to post..."}
+                  placeholder={user ? t('community.shareThoughts') : t('community.loginToPost')}
                   disabled={!user}
                 />
                 <div className="flex justify-between items-center mt-4">
                   <div className="text-sm text-gray-400">
-                    {text.length > 0 && `${text.length} characters`}
+                    {text.length > 0 && `${text.length} ${t('community.characters')}`}
                   </div>
                   <button
                     onClick={send}
@@ -92,14 +94,14 @@ const CommunityPage: React.FC = () => {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
-                          Posting...
+                          {t('community.posting')}
                         </>
                       ) : (
                         <>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                           </svg>
-                          Post Message
+                          {t('community.post')}
                         </>
                       )}
                     </span>
@@ -116,7 +118,7 @@ const CommunityPage: React.FC = () => {
             <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
             </svg>
-            Recent Posts
+            {t('community.hub')}
             <span className="text-sm font-normal text-blue-300">({messages.length})</span>
           </h2>
           

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface HelpModalProps {
   isOpen: boolean;
@@ -13,6 +14,8 @@ const InstructionStep: React.FC<{ title: string; children: React.ReactNode }> = 
 );
 
 export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
+  const { t } = useLanguage();
+  
   if (!isOpen) return null;
 
   return (
@@ -27,45 +30,45 @@ export const HelpModal: React.FC<HelpModalProps> = ({ isOpen, onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4 pb-2 border-b">
-            <h2 className="text-xl font-bold text-gray-800">How to Use the Dashboard</h2>
+            <h2 className="text-xl font-bold text-gray-800">{t('help.title')}</h2>
             <button onClick={onClose} className="text-gray-400 hover:text-gray-600">&times;</button>
         </div>
         
         <div className="space-y-4">
-            <InstructionStep title="1. Simulation Controls">
-                <p><strong className="font-medium">Start/Pause:</strong> Toggles the automatic movement and battery depletion of the wheelchairs.</p>
-                <p><strong className="font-medium">Reset:</strong> Clears the map of all wheelchairs and obstacles and stops the simulation.</p>
+            <InstructionStep title={t('help.simulationControls')}>
+                <p><strong className="font-medium">{t('help.startPause')}</strong></p>
+                <p><strong className="font-medium">{t('help.reset')}</strong></p>
             </InstructionStep>
             
-            <InstructionStep title="2. Adding Elements">
-                <p><strong className="font-medium">Add Wheelchair:</strong> Places a new, fully charged wheelchair at a random available spot on the map.</p>
-                <p><strong className="font-medium">Add Obstacle:</strong> Places a new obstacle on a random empty square.</p>
+            <InstructionStep title={t('help.addingElements')}>
+                <p><strong className="font-medium">{t('help.addWheelchair')}</strong></p>
+                <p><strong className="font-medium">{t('help.addObstacle')}</strong></p>
             </InstructionStep>
 
-            <InstructionStep title="3. Selecting a Wheelchair">
-                <p>Simply <strong className="font-medium">click on any wheelchair</strong> on the map to select it. The selected wheelchair will have a blue border.</p>
-                <p>Once selected, its details will appear in the <strong className="font-medium">Wheelchair Details</strong> panel, and you can give it commands.</p>
+            <InstructionStep title={t('help.selectWheelchair')}>
+                <p>{t('help.clickWheelchair')}</p>
+                <p>{t('help.detailsPanel')}</p>
             </InstructionStep>
 
-            <InstructionStep title="4. Autonomous Movement">
-                <p>After selecting a wheelchair, <strong className="font-medium">click any empty cell</strong> on the map to set it as the destination.</p>
-                <p>If the simulation is running, the wheelchair will automatically start moving along the calculated path (shown as a dashed line) towards the red 'X' marker.</p>
+            <InstructionStep title={t('help.autonomousMovement')}>
+                <p>{t('help.clickEmpty')}</p>
+                <p>{t('help.simulationMovement')}</p>
             </InstructionStep>
 
-            <InstructionStep title="5. Manual Controls">
-                <p>When a wheelchair is selected, you can use the <strong className="font-medium">arrow buttons</strong> in the control panel or the <strong className="font-medium">arrow keys on your keyboard</strong> to move it one cell at a time.</p>
-                <p>Manual movement will cancel any existing destination and path.</p>
+            <InstructionStep title={t('help.manualControls')}>
+                <p>{t('help.arrowButtons')}</p>
+                <p>{t('help.cancelDestination')}</p>
             </InstructionStep>
 
-            <InstructionStep title="6. Understanding the Display">
-                <p><strong className="font-medium">Wheelchair Colors:</strong> Green (Available), Blue (In Transit), and Red (Needs Assistance, e.g., low battery or blocked).</p>
-                <p><strong className="font-medium">Details Panel:</strong> Shows the selected wheelchair's ID, status, battery level, current coordinates, and destination.</p>
+            <InstructionStep title={t('help.understanding')}>
+                <p><strong className="font-medium">{t('help.wheelchairColors')}</strong></p>
+                <p><strong className="font-medium">{t('help.detailsInfo')}</strong></p>
             </InstructionStep>
         </div>
 
         <div className="mt-6 pt-4 border-t text-right">
              <button onClick={onClose} className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">
-                Got it!
+                {t('help.gotIt')}
             </button>
         </div>
       </div>
