@@ -177,7 +177,7 @@ const ContactPage: React.FC = () => {
                 For immediate assistance, check out our Support Center where you can create tickets and track their status.
               </p>
               <a
-                href="/#/support"
+                href="#/tickets"
                 className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-medium transition-colors duration-300"
               >
                 Visit Support Center
