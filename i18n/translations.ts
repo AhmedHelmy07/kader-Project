@@ -208,7 +208,7 @@ export const translations: Record<Language, Record<string, string>> = {
     'nav.signedInAs': 'الدخول باسم',
 
     // Homepage
-    'home.title': 'مرحبا بك في مشروع كادر',
+    'home.title': 'مرحبا بك في مشروع قادر',
     'home.subtitle': 'تمكين مستخدمي الكراسي المتحركة في جميع أنحاء العالم',
     'home.banner1': 'تكنولوجيا الكراسي المتحركة المتقدمة',
     'home.banner2': 'شبكة دعم المجتمع',
