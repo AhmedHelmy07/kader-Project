@@ -189,6 +189,15 @@ export const translations: Record<Language, Record<string, string>> = {
     'home.gohub': 'Go to Hub',
     'home.gostore': 'Go to Store',
     'home.autoplays': 'Auto-play',
+
+    // Wheelchair Info Panel
+    'wheelchair.details': 'Wheelchair Details',
+    'wheelchair.id': 'ID',
+    'wheelchair.status': 'Status',
+    'wheelchair.battery': 'Battery',
+    'wheelchair.position': 'Position',
+    'wheelchair.destination': 'Destination',
+    'wheelchair.notAvailable': 'N/A',
   },
 
   ar: {
@@ -343,6 +352,15 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.edit': 'تحرير',
     'common.search': 'بحث',
     'common.noResults': 'لم يتم العثور على نتائج',
+
+    // Wheelchair Info Panel
+    'wheelchair.details': 'تفاصيل الكرسي المتحرك',
+    'wheelchair.id': 'المعرف',
+    'wheelchair.status': 'الحالة',
+    'wheelchair.battery': 'البطارية',
+    'wheelchair.position': 'الموقع',
+    'wheelchair.destination': 'الوجهة',
+    'wheelchair.notAvailable': 'غير متاح',
   },
 
   es: {
@@ -476,6 +494,15 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.edit': 'Editar',
     'common.search': 'Buscar',
     'common.noResults': 'No se encontraron resultados',
+
+    // Wheelchair Info Panel
+    'wheelchair.details': 'Detalles de la Silla de Ruedas',
+    'wheelchair.id': 'ID',
+    'wheelchair.status': 'Estado',
+    'wheelchair.battery': 'Batería',
+    'wheelchair.position': 'Posición',
+    'wheelchair.destination': 'Destino',
+    'wheelchair.notAvailable': 'N/A',
   },
 
   fr: {
@@ -609,6 +636,15 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.edit': 'Éditer',
     'common.search': 'Rechercher',
     'common.noResults': 'Aucun résultat trouvé',
+
+    // Wheelchair Info Panel
+    'wheelchair.details': 'Détails du Fauteuil Roulant',
+    'wheelchair.id': 'ID',
+    'wheelchair.status': 'Statut',
+    'wheelchair.battery': 'Batterie',
+    'wheelchair.position': 'Position',
+    'wheelchair.destination': 'Destination',
+    'wheelchair.notAvailable': 'N/A',
   },
 
   de: {
@@ -742,6 +778,15 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.edit': 'Bearbeiten',
     'common.search': 'Suche',
     'common.noResults': 'Keine Ergebnisse gefunden',
+
+    // Wheelchair Info Panel
+    'wheelchair.details': 'Rollstuhl-Details',
+    'wheelchair.id': 'ID',
+    'wheelchair.status': 'Status',
+    'wheelchair.battery': 'Akku',
+    'wheelchair.position': 'Position',
+    'wheelchair.destination': 'Ziel',
+    'wheelchair.notAvailable': 'N/A',
   },
 
   it: {
@@ -875,6 +920,15 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.edit': 'Modifica',
     'common.search': 'Cerca',
     'common.noResults': 'Nessun risultato trovato',
+
+    // Wheelchair Info Panel
+    'wheelchair.details': 'Dettagli della Sedia a Rotelle',
+    'wheelchair.id': 'ID',
+    'wheelchair.status': 'Stato',
+    'wheelchair.battery': 'Batteria',
+    'wheelchair.position': 'Posizione',
+    'wheelchair.destination': 'Destinazione',
+    'wheelchair.notAvailable': 'N/A',
   },
 
   pt: {
@@ -1008,6 +1062,15 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.edit': 'Editar',
     'common.search': 'Pesquisar',
     'common.noResults': 'Nenhum resultado encontrado',
+
+    // Wheelchair Info Panel
+    'wheelchair.details': 'Detalhes da Cadeira de Rodas',
+    'wheelchair.id': 'ID',
+    'wheelchair.status': 'Status',
+    'wheelchair.battery': 'Bateria',
+    'wheelchair.position': 'Posição',
+    'wheelchair.destination': 'Destino',
+    'wheelchair.notAvailable': 'N/A',
   },
 
   zh: {
@@ -1141,6 +1204,15 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.edit': '编辑',
     'common.search': '搜索',
     'common.noResults': '未找到结果',
+
+    // Wheelchair Info Panel
+    'wheelchair.details': '轮椅详情',
+    'wheelchair.id': 'ID',
+    'wheelchair.status': '状态',
+    'wheelchair.battery': '电池',
+    'wheelchair.position': '位置',
+    'wheelchair.destination': '目的地',
+    'wheelchair.notAvailable': 'N/A',
   },
 
   ja: {
@@ -1274,6 +1346,15 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.edit': '編集',
     'common.search': '検索',
     'common.noResults': '結果が見つかりません',
+
+    // Wheelchair Info Panel
+    'wheelchair.details': '車椅子の詳細',
+    'wheelchair.id': 'ID',
+    'wheelchair.status': 'ステータス',
+    'wheelchair.battery': 'バッテリー',
+    'wheelchair.position': 'ポジション',
+    'wheelchair.destination': '目的地',
+    'wheelchair.notAvailable': 'N/A',
   },
 
   ko: {
@@ -1402,5 +1483,14 @@ export const translations: Record<Language, Record<string, string>> = {
     'common.edit': '편집',
     'common.search': '검색',
     'common.noResults': '결과가 없습니다',
+
+    // Wheelchair Info Panel
+    'wheelchair.details': '휠체어 세부정보',
+    'wheelchair.id': 'ID',
+    'wheelchair.status': '상태',
+    'wheelchair.battery': '배터리',
+    'wheelchair.position': '위치',
+    'wheelchair.destination': '목적지',
+    'wheelchair.notAvailable': 'N/A',
   },
 };

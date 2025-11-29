@@ -46,13 +46,13 @@ export const WheelchairInfoPanel: React.FC<WheelchairInfoPanelProps> = ({ wheelc
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200">
-      <h3 className="text-lg font-semibold mb-2 text-gray-700">Wheelchair Details</h3>
-      <p className="text-xs text-gray-400 mb-4 truncate">ID: {id}</p>
+      <h3 className="text-lg font-semibold mb-2 text-gray-700">{t('wheelchair.details')}</h3>
+      <p className="text-xs text-gray-400 mb-4 truncate">{t('wheelchair.id')}: {id}</p>
       
       <div className="space-y-2">
         <InfoRow
             icon={<StatusIcon className="w-5 h-5"/>}
-            label="Status"
+            label={t('wheelchair.status')}
             value={
                 <span className={`px-2 py-1 text-xs font-bold rounded-full ${style.bg} ${style.text}`}>
                     {status}
@@ -61,7 +61,7 @@ export const WheelchairInfoPanel: React.FC<WheelchairInfoPanelProps> = ({ wheelc
         />
          <InfoRow
             icon={<BatteryIcon className="w-5 h-5"/>}
-            label="Battery"
+            label={t('wheelchair.battery')}
             value={
                 <div className="flex items-center gap-2">
                     <span>{battery.toFixed(0)}%</span>
@@ -73,13 +73,13 @@ export const WheelchairInfoPanel: React.FC<WheelchairInfoPanelProps> = ({ wheelc
         />
         <InfoRow
             icon={<PositionIcon className="w-5 h-5"/>}
-            label="Position"
+            label={t('wheelchair.position')}
             value={`(${position.x}, ${position.y})`}
         />
         <InfoRow
             icon={<PositionIcon className="w-5 h-5 text-blue-500"/>}
-            label="Destination"
-            value={destination ? `(${destination.x}, ${destination.y})` : 'N/A'}
+            label={t('wheelchair.destination')}
+            value={destination ? `(${destination.x}, ${destination.y})` : t('wheelchair.notAvailable')}
         />
       </div>
     </div>
