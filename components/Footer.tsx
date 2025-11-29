@@ -1,10 +1,12 @@
 import React from 'react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 interface FooterProps {
   theme?: 'light' | 'dark';
 }
 
 export const Footer: React.FC<FooterProps> = ({ theme = 'dark' }) => {
+  const { t } = useLanguage();
   const themeClasses = theme === 'dark'
     ? 'bg-gradient-to-b from-gray-900 to-black text-gray-400 border-t border-gray-800'
     : 'bg-gradient-to-b from-gray-50 to-gray-100 text-gray-600 border-t border-gray-200';
@@ -32,8 +34,8 @@ export const Footer: React.FC<FooterProps> = ({ theme = 'dark' }) => {
             </a>
           </div>
           <div className="h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
-          <p className="text-sm">Made by <span className="font-semibold text-blue-400">Kaderoon Team</span> - All Rights Reserved 2025</p>
-          <p className="text-xs text-gray-500">Revolutionizing patient mobility with smart autonomous wheelchair technology</p>
+          <p className="text-sm">Made by <span className="font-semibold text-blue-400">Kaderoon Team</span> - {t('common.home')} © 2025</p>
+          <p className="text-xs text-gray-500">{t('home.heroSubtitle')}</p>
         </div>
       </div>
     </footer>

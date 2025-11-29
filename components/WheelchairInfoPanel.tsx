@@ -2,6 +2,7 @@
 import React from 'react';
 import type { Wheelchair } from '../types';
 import { WheelchairStatus } from '../types';
+import { useLanguage } from '../i18n/LanguageContext';
 import { BatteryIcon, StatusIcon, PositionIcon } from './icons/InfoIcons';
 
 interface WheelchairInfoPanelProps {
@@ -28,10 +29,12 @@ const InfoRow: React.FC<{ icon: React.ReactNode; label: string; value: React.Rea
 
 
 export const WheelchairInfoPanel: React.FC<WheelchairInfoPanelProps> = ({ wheelchair }) => {
+  const { t } = useLanguage();
+  
   if (!wheelchair) {
     return (
       <div className="bg-white rounded-lg shadow-md p-4 border border-gray-200 h-full flex items-center justify-center">
-        <p className="text-gray-500">Select a wheelchair to view details</p>
+        <p className="text-gray-500">{t('common.noResults')}</p>
       </div>
     );
   }

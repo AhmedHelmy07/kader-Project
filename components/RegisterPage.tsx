@@ -253,16 +253,16 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ navigate }) => {
       />
           </div>
           <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg disabled:opacity-50 disabled:cursor-not-allowed" type="submit" disabled={isLoading}>
-            {isLoading ? 'Creating account...' : 'Register'}
+            {isLoading ? 'Creating account...' : t('auth.register')}
           </button>
           <button type="button" onClick={() => navigate('#/')} className="w-full mt-2 bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors text-lg disabled:opacity-50" disabled={isLoading}>
-            Cancel
+            {t('common.cancel')}
           </button>
         </form>
          <p className="text-center text-blue-300 text-sm mt-6">
-          Already have an account?{' '}
+          {t('auth.haveAccount')}{' '}
           <a href="#/login" onClick={(e) => { e.preventDefault(); navigate('#/login'); }} className="font-bold text-blue-400 hover:text-blue-500">
-            Login here
+            {t('auth.loginHere')}
           </a>
         </p>
       </div>
