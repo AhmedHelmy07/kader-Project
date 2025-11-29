@@ -2,25 +2,27 @@ import React, { useState } from 'react';
 import { postContactMessage } from '../services/firestore';
 import { KaderLogo } from './icons/KaderLogo';
 import { useToast } from './Toast';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const ContactPage: React.FC = () => {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [text, setText] = useState('');
   const [isSending, setIsSending] = useState(false);
 
   const toast = useToast();
   const submit = async () => {
-    if (!email || !text.trim()) return toast?.push ? toast.push('Please fill email and message') : alert('Please fill email and message');
+    if (!email || !text.trim()) return toast?.push ? toast.push(t('contact.fillFields')) : alert(t('contact.fillFields'));
     
     setIsSending(true);
     try {
       await postContactMessage({ userEmail: email, text: text.trim() });
       setEmail('');
       setText('');
-      toast?.push ? toast.push('Message sent — we will contact you soon!') : alert('Message sent — we will contact you soon');
+      toast?.push ? toast.push(t('contact.messageSent')) : alert(t('contact.messageSent'));
     } catch (err) {
       console.error(err);
-      toast?.push ? toast.push('Failed to send message') : alert('Failed to send message');
+      toast?.push ? toast.push(t('contact.sendFailed')) : alert(t('contact.sendFailed'));
     } finally {
       setIsSending(false);
     }
@@ -38,10 +40,10 @@ const ContactPage: React.FC = () => {
             </div>
           </div>
           <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
-            Get In Touch
+            {t('contact.getInTouch')}
           </h1>
           <p className="text-xl text-indigo-200 max-w-2xl mx-auto">
-            Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible
+            {t('contact.haveQuestions')}
           </p>
         </div>
 
@@ -55,12 +57,12 @@ const ContactPage: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-white">Send us a Message</h2>
+                <h2 className="text-2xl font-bold text-white">{t('contact.sendMessage')}</h2>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Your Email</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">{t('contact.yourEmail')}</label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +71,7 @@ const ContactPage: React.FC = () => {
                     </div>
                     <input
                       type="email"
-                      placeholder="your.email@example.com"
+                      placeholder={t('contact.placeholder')}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300"
@@ -78,16 +80,16 @@ const ContactPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Message</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">{t('contact.message')}</label>
                   <textarea
-                    placeholder="Tell us what's on your mind..."
+                    placeholder={t('contact.tellUs')}
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                     className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 resize-none"
                     rows={8}
                   />
                   <div className="text-sm text-gray-400 mt-2">
-                    {text.length > 0 && `${text.length} characters`}
+                    {text.length > 0 && `${text.length} ${t('contact.characters')}`}
                   </div>
                 </div>
 
@@ -104,14 +106,14 @@ const ContactPage: React.FC = () => {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        Sending Message...
+                        {t('contact.sending')}
                       </>
                     ) : (
                       <>
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                         </svg>
-                        Send Message
+                        {t('contact.send')}
                       </>
                     )}
                   </span>
@@ -124,7 +126,7 @@ const ContactPage: React.FC = () => {
           <div className="space-y-6 animate-fade-in-delay-2">
             {/* Contact Info Card */}
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-8">
-              <h3 className="text-2xl font-bold text-white mb-6">Contact Information</h3>
+              <h3 className="text-2xl font-bold text-white mb-6">{t('contact.contactInfo')}</h3>
               <div className="space-y-5">
                 <div className="flex items-start gap-4 group">
                   <div className="p-3 bg-indigo-500/20 rounded-lg group-hover:bg-indigo-500/30 transition-all duration-300">
@@ -133,8 +135,8 @@ const ContactPage: React.FC = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold mb-1">Email</h4>
-                    <p className="text-gray-300">support@kader-project.com</p>
+                    <h4 className="text-white font-semibold mb-1">{t('contact.email')}</h4>
+                    <p className="text-gray-300">{t('contact.supportEmail')}</p>
                   </div>
                 </div>
 
@@ -145,8 +147,8 @@ const ContactPage: React.FC = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold mb-1">Response Time</h4>
-                    <p className="text-gray-300">Usually within 24 hours</p>
+                    <h4 className="text-white font-semibold mb-1">{t('contact.responseTime')}</h4>
+                    <p className="text-gray-300">{t('contact.usuallyWithin')}</p>
                   </div>
                 </div>
 
@@ -158,8 +160,8 @@ const ContactPage: React.FC = () => {
                     </svg>
                   </div>
                   <div>
-                    <h4 className="text-white font-semibold mb-1">Location</h4>
-                    <p className="text-gray-300">Serving globally</p>
+                    <h4 className="text-white font-semibold mb-1">{t('contact.location')}</h4>
+                    <p className="text-gray-300">{t('contact.servingGlobally')}</p>
                   </div>
                 </div>
               </div>
@@ -171,16 +173,16 @@ const ContactPage: React.FC = () => {
                 <svg className="w-8 h-8 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h3 className="text-xl font-bold text-white">Quick Help</h3>
+                <h3 className="text-xl font-bold text-white">{t('contact.quickHelp')}</h3>
               </div>
               <p className="text-gray-300 mb-4">
-                For immediate assistance, check out our Support Center where you can create tickets and track their status.
+                {t('contact.checkSupport')}
               </p>
               <a
                 href="#/tickets"
                 className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-medium transition-colors duration-300"
               >
-                Visit Support Center
+                {t('contact.visitSupport')}
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -193,16 +195,16 @@ const ContactPage: React.FC = () => {
                 <svg className="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                <h3 className="text-xl font-bold text-white">Join Our Community</h3>
+                <h3 className="text-xl font-bold text-white">{t('contact.joinCommunity')}</h3>
               </div>
               <p className="text-gray-300 mb-4">
-                Connect with other users, share experiences, and get community support.
+                {t('contact.connectCommunity')}
               </p>
               <a
                 href="/#/community"
                 className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 font-medium transition-colors duration-300"
               >
-                Visit Community Hub
+                {t('contact.visitCommunity')}
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>

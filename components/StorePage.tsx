@@ -42,6 +42,11 @@ const StorePage: React.FC<StorePageProps> = ({ navigate }) => {
   }, [user]);
 
   const addToCart = (product: Product) => {
+    if (!product.id) {
+      console.error('Product has no ID:', product);
+      alert('Error: Product ID is missing. Please try again.');
+      return;
+    }
     setCart(prev => {
       const idx = prev.findIndex(i => i.product.id === product.id);
       if (idx >= 0) {

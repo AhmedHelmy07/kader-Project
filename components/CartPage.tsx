@@ -118,23 +118,39 @@ const CartPage: React.FC<{ navigate: (path: string) => void }> = ({ navigate }) 
 
   const removeAt = (productId: string | undefined) => {
     if (!productId) {
+      console.error('removeAt: Product ID is undefined');
       toast?.push('❌ Error: Product ID not found');
       return;
     }
-    const copy = items.filter(item => item.product.id !== productId);
+    console.log('Removing product:', productId);
+    const initialLength = items.length;
+    const copy = items.filter(item => {
+      const itemId = item.product.id;
+      return itemId !== productId;
+    });
+    
+    if (copy.length === initialLength) {
+      console.warn('No items were removed. Product ID might not match any items.');
+      toast?.push('⚠️ Item not found in cart');
+      return;
+    }
+    
     setItems(copy);
     toast?.push('✅ Item removed from cart');
   };
 
   const updateQuantity = (productId: string | undefined, qty: number) => {
     if (!productId) {
+      console.error('updateQuantity: Product ID is undefined');
       toast?.push('❌ Error: Product ID not found');
       return;
     }
     const validQty = Math.max(1, qty);
-    const copy = items.map(item =>
-      item.product.id === productId ? { ...item, qty: validQty } : item
-    );
+    console.log('Updating quantity for product:', productId, 'to:', validQty);
+    const copy = items.map(item => {
+      const itemId = item.product.id;
+      return itemId === productId ? { ...item, qty: validQty } : item;
+    });
     setItems(copy);
   };
 
